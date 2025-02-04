@@ -1,0 +1,7 @@
+build/
+*.o
+*.exe
+*.log
+*.dSYM
+*.vscode
+*.DS_store
