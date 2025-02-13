@@ -64,12 +64,16 @@ class Queue{
 
        // Metodo que elimina el primer ELEMENTO (no grupo) de la fila
         void dequeue(){ 
-            if (length == 0) return; // Si la lista esta vacia
+            if (length == 0){// Si la lista esta vacia
+                cout << "La fila esta vacia, nada para eliminar" << endl;
+                return;
+            } 
 
             Node *temp = first;
             if (length == 1){ // Si la fila solo tiene un elemento
                 first = nullptr;
                 last = nullptr;
+                cout << "La fila quedo vacia" << endl;
             }
             else{
                 first = first->next;
