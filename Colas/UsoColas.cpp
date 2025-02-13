@@ -1,5 +1,4 @@
 /*
-
 Aca debemos implementar la ejecucion de las colas:
 1. hacer dos colas, la vip y la normal. Solo poder dequeue la normal cuando la vip este vacia. Se puede hacer enqueue a cualquiera
 2. Manejar los grupos. Esta parte esta mas dudosa, pero basicamente es tipo cuando en la montaña rusa quedan 3 campos, entonces le dicen
@@ -10,3 +9,25 @@ Aca debemos implementar la ejecucion de las colas:
     adelantarse y ponerse todos a la par
 
 */
+
+#include <iostream>
+#include <string>
+#include "Queue.h"
+
+// Script de prueba
+int main(){
+    Queue prueba;
+
+    prueba.enqueue("Ale", 3);
+    prueba.enqueue("Cami", 2);
+
+    prueba.printQueue();
+    cout << "---------------" << endl;
+
+    prueba.dequeue();
+    prueba.dequeue();
+    prueba.dequeue();
+    prueba.printQueue();
+
+    return 0;
+}

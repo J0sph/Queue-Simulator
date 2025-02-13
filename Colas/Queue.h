@@ -64,7 +64,7 @@ class Queue{
 
        // Metodo que elimina el primer ELEMENTO (no grupo) de la fila
         void dequeue(){ 
-            if (length = 0) return; // Si la lista esta vacia
+            if (length == 0) return; // Si la lista esta vacia
 
             Node *temp = first;
             if (length == 1){ // Si la fila solo tiene un elemento
@@ -78,7 +78,7 @@ class Queue{
             length --;
 
             // Actualizar numeros de grupo, si es necesario
-            if (first->grp != 1) updateGroupNum;
+            if (first->grp != 1) updateGroupNum();
         }
 
         // Metodo para imprimir la cola
