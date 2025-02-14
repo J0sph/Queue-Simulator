@@ -18,16 +18,23 @@ Aca debemos implementar la ejecucion de las colas:
 int main(){
     Queue prueba;
 
-    prueba.enqueue("Ale", 3);
-    prueba.enqueue("Cami", 2);
+    prueba.enqueue("Ale", 2);
+    prueba.enqueue("Cami", 4);
 
     prueba.printQueue();
     cout << "---------------" << endl;
 
-    prueba.dequeue();
-    prueba.dequeue();
-    prueba.dequeue();
-    prueba.printQueue();
+    // prueba.dequeueSingle();
+    // prueba.dequeueSingle();
+    // prueba.dequeueSingle();
+    // prueba.printQueue();
 
+    prueba.dequeueGroup();
+    prueba.printQueue();
+    cout << "---------------" << endl;
+
+    prueba.dequeueGroup();
+    prueba.printQueue();
+    
     return 0;
 }

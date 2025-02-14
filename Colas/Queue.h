@@ -63,7 +63,7 @@ class Queue{
         }
 
        // Metodo que elimina el primer ELEMENTO (no grupo) de la fila
-        void dequeue(){ 
+        void dequeueSingle(){ 
             if (length == 0){// Si la lista esta vacia
                 cout << "La fila esta vacia, nada para eliminar" << endl;
                 return;
@@ -77,20 +77,48 @@ class Queue{
             }
             else{
                 first = first->next;
+                delete temp;
             }
-            delete temp; // Se elimina el nodo
+             // Se elimina el nodo
             length --;
 
             // Actualizar numeros de grupo, si es necesario
-            if (first->grp != 1) updateGroupNum();
+            if (length != 0 && first->grp != 1) updateGroupNum();
+        }
+
+        // Metodo que elimina el primer GRUPO de la fila
+        void dequeueGroup(){
+            if (length == 0){// Si la lista esta vacia
+                cout << "La fila esta vacia, nada para eliminar" << endl;
+                return;
+            } 
+            Node *temp2 = first;
+
+            // Se determina de que tamaño es el grupo
+            int groupSize = 1;
+            while(temp2->next->grp == 1){
+                groupSize ++;
+                temp2 = temp2->next;
+                if (temp2->next == nullptr) break;
+            }
+            
+            // Se corre dequeueSingle la cantidad de veces requerida
+            for (int i = 0; i < groupSize; i++){
+                dequeueSingle();
+            }
+
         }
 
         // Metodo para imprimir la cola
         void printQueue() {
-            Node* temp = first;
-            while (temp) {  
-                cout <<"Name: " << temp->name <<", group: " << temp->grp << endl;  
-                temp = temp->next; 
+            if (length == 0){
+                cout << "La fila esta vacia, nada para imprimir" << endl;
+            }else{
+                Node* temp = first;
+                while (temp) {  
+                    cout <<"Name: " << temp->name <<", group: " << temp->grp << endl;  
+                    temp = temp->next; 
+                }
             }
         }
 
