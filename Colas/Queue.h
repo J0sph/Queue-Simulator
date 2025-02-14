@@ -25,6 +25,12 @@ class Queue{
             length = 1;
         }
 
+        // Metodo que determina si la cola esta vacia
+        bool isEmpty(){
+            if (length == 0) return true;
+            else return false;
+        }
+
         // Metodo que agrega un grupo de elementos al final de la fila
         void enqueue(string name, int groupSize){
             if (length == 0){ // Si la lista esta vacia, el primer nodo se hace a mano, con grp = 1
