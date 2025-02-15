@@ -31,31 +31,57 @@ class Queue{
             else return false;
         }
 
-        // Metodo que agrega un grupo de elementos al final de la fila
+        // Metodo que agrega un grupo de elementos en cualquier parte de la fila
         void enqueue(string name, int groupSize){
             if (length == 0){ // Si la lista esta vacia, el primer nodo se hace a mano, con grp = 1
                 Node *newNode = new Node(name, 1);
                 first = newNode;
                 last = newNode;
 
-                for (int i = 0; i < groupSize - 1; i++){
+                for (int i = 0; i < groupSize - 1; i++){ // Se agregan el resto de nodos
                     Node *newNode2 = new Node(name, 1);
                     last->next = newNode2;
                     last = newNode2;
                 }
+                length += groupSize;
 
             } else {  
+                Node *temp = first;
+                while (temp){  // Se recorre la lista para ver si el grupo ya existe
+
+                    if ((temp->name == name) && (temp == last)){ // Caso de que el grupo existente es el ultimo de la fila
+                        for (int i = 0; i < groupSize; i++){ // Crea los nodos correspondientes al grupo y los pone al final del mismo
+                            Node *newNode = new Node (name, temp->grp);
+                            last->next = newNode;
+                            last = newNode;
+                        }
+                    length += groupSize;
+                    return; // Despues de agregar al grupo, se termina la funcion
+                    
+                    } else if ((temp->name == name) && (temp->next->name != name)){ // Caso de que el grupo existente NO es el ultimo
+                        for (int i = 0; i < groupSize; i++){ 
+                            Node *newNode = new Node (name, temp->grp);
+                            newNode->next = temp->next; // No se modifica last, solo temp
+                            temp->next = newNode;
+
+                            temp = newNode;
+                        }
+                    length += groupSize;
+                    return; 
+
+                    } else temp = temp->next; // Si el grupo no existe, se llega al final y termina el while
+                }
+                
+                // Si el grupo no existe, se agrega al final de la lista
                 int currGroup = last->grp + 1; // Los numeros de grupo son consecutivos
-                for (int i = 0; i < groupSize; i++){ // Crea los nodos correspondientes al grupo
+                for (int i = 0; i < groupSize; i++){
                     Node *newNode = new Node (name, currGroup);
-                    last->next = newNode;
+                    last->next = newNode; // Modifica last, usa nuevo numero de grupo
                     last = newNode;
                 }
             }
             length += groupSize; // Se aumenta el largo de la fila
         }
-
-        // Poner metodo para aumentar el tamaño de grupos ya existentes
 
         // Metodo que se disminuye por 1 el numero de grupo de todos los elementos
         // Se usa en dequeue
@@ -71,7 +97,7 @@ class Queue{
        // Metodo que elimina el primer ELEMENTO (no grupo) de la fila
         void dequeueSingle(){ 
             if (length == 0){// Si la lista esta vacia
-                cout << "La fila esta vacia, nada para eliminar" << endl;
+                cout << "La fila esta vacia, ningun elemento para eliminar" << endl;
                 return;
             } 
 
@@ -95,7 +121,7 @@ class Queue{
         // Metodo que elimina el primer GRUPO de la fila
         void dequeueGroup(){
             if (length == 0){// Si la lista esta vacia
-                cout << "La fila esta vacia, nada para eliminar" << endl;
+                cout << "La fila esta vacia, ningun grupo para eliminar" << endl;
                 return;
             } 
             Node *temp2 = first;
@@ -129,5 +155,3 @@ class Queue{
         }
 
 };
-
-// Node: string name, int grp, node next

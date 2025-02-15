@@ -10,7 +10,7 @@ Aca debemos implementar la ejecucion de las colas:
 
 2. Puse dos metodos dequeue, uno que elimina el grupo completo, y otro que elimina a la primera persona.
 3. Para ingresar personas, se les pregunta si son vips o regulares, y cuantas personas hay en su grupo.
-4. Introducir la capacidad de 'guardar campo': si alguien de un grupo ya esta metido en la cola, los demas de ese mismo grupo pueden
+4. Se tiene la capacidad de 'guardar campo': si alguien de un grupo ya esta metido en la cola, los demas de ese mismo grupo pueden
     adelantarse y ponerse todos a la par
 
 */
@@ -23,23 +23,37 @@ Aca debemos implementar la ejecucion de las colas:
 int main(){
     Queue prueba;
 
-    prueba.enqueue("Ale", 2);
-    prueba.enqueue("Cami", 4);
+    prueba.enqueue("Ale", 1);
+    prueba.enqueue("Cami", 1);
 
     prueba.printQueue();
     cout << "---------------" << endl;
 
-    // prueba.dequeueSingle();
-    // prueba.dequeueSingle();
-    // prueba.dequeueSingle();
-    // prueba.printQueue();
+    prueba.enqueue("Ale",3);
+    prueba.printQueue();
+    cout << "---------------" << endl;
+
+    prueba.enqueue("Cami", 2);
+    prueba.printQueue();
+    cout << "---------------" << endl;
+    prueba.enqueue("Fer", 2);
+    prueba.printQueue();
+    cout << "---------------" << endl;
+    prueba.enqueue("Ale", 4);
+    prueba.printQueue();
+    cout << "---------------" << endl;
+    cout << "Se comienza a borrar elementos" << endl;
+
+    prueba.dequeueSingle();
+    prueba.dequeueSingle();
+    prueba.dequeueSingle();
+    prueba.printQueue();
+    cout << "---------------" << endl;
+    cout << "Se comienza a borrar grupos" << endl;
 
     prueba.dequeueGroup();
     prueba.printQueue();
     cout << "---------------" << endl;
 
-    prueba.dequeueGroup();
-    prueba.printQueue();
-    
     return 0;
 }
