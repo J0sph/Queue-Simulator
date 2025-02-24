@@ -32,55 +32,52 @@ class Queue{
         }
 
         // Metodo que agrega un grupo de elementos en cualquier parte de la fila
-        void enqueue(string name, int groupSize){
-            if (length == 0){ // Si la lista esta vacia, el primer nodo se hace a mano, con grp = 1
-                Node *newNode = new Node(name, 1);
+        void enqueue(string name, int groupSize) {
+            // Si la cola está vacía, agregamos el primer nodo
+            if (length == 0) {
+                Node *newNode = new Node(name, 1); // El primer nodo siempre tendrá grupo 1
                 first = newNode;
                 last = newNode;
-
-                for (int i = 0; i < groupSize - 1; i++){ // Se agregan el resto de nodos
-                    Node *newNode2 = new Node(name, 1);
+                length = 1;
+        
+                // Agregamos el resto de los nodos si groupSize > 1
+                for (int i = 1; i < groupSize; i++) {
+                    Node *newNode2 = new Node(name, 1); // Todos los nodos tienen el mismo nombre y grupo
                     last->next = newNode2;
                     last = newNode2;
                 }
-                length += groupSize;
-
-            } else {  
+                length += groupSize - 1; // Aumentamos la longitud de la cola
+            } else {
                 Node *temp = first;
-                while (temp){  // Se recorre la lista para ver si el grupo ya existe
-
-                    if ((temp->name == name) && (temp == last)){ // Caso de que el grupo existente es el ultimo de la fila
-                        for (int i = 0; i < groupSize; i++){ // Crea los nodos correspondientes al grupo y los pone al final del mismo
-                            Node *newNode = new Node (name, temp->grp);
+                bool groupFound = false;
+        
+                // Buscamos si ya existe el grupo, si es así agregamos al final del mismo
+                while (temp) {
+                    if (temp->name == name) {
+                        // Caso: el grupo ya existe
+                        for (int i = 0; i < groupSize; i++) {
+                            Node *newNode = new Node(name, temp->grp); // Los nuevos nodos se agregan con el mismo grupo
                             last->next = newNode;
                             last = newNode;
                         }
-                    length += groupSize;
-                    return; // Despues de agregar al grupo, se termina la funcion
-                    
-                    } else if ((temp->name == name) && (temp->next->name != name)){ // Caso de que el grupo existente NO es el ultimo
-                        for (int i = 0; i < groupSize; i++){ 
-                            Node *newNode = new Node (name, temp->grp);
-                            newNode->next = temp->next; // No se modifica last, solo temp
-                            temp->next = newNode;
-
-                            temp = newNode;
-                        }
-                    length += groupSize;
-                    return; 
-
-                    } else temp = temp->next; // Si el grupo no existe, se llega al final y termina el while
+                        length += groupSize; // Aumentamos la longitud de la cola
+                        groupFound = true;
+                        break;
+                    }
+                    temp = temp->next;
                 }
-                
-                // Si el grupo no existe, se agrega al final de la lista
-                int currGroup = last->grp + 1; // Los numeros de grupo son consecutivos
-                for (int i = 0; i < groupSize; i++){
-                    Node *newNode = new Node (name, currGroup);
-                    last->next = newNode; // Modifica last, usa nuevo numero de grupo
-                    last = newNode;
+        
+                // Si no encontramos el grupo, lo agregamos al final de la cola con un nuevo grupo
+                if (!groupFound) {
+                    int currGroup = last->grp + 1; // Incrementamos el grupo
+                    for (int i = 0; i < groupSize; i++) {
+                        Node *newNode = new Node(name, currGroup);
+                        last->next = newNode;
+                        last = newNode;
+                    }
+                    length += groupSize; // Aumentamos la longitud de la cola
                 }
             }
-            length += groupSize; // Se aumenta el largo de la fila
         }
 
         // Metodo que se disminuye por 1 el numero de grupo de todos los elementos
@@ -99,20 +96,15 @@ class Queue{
             if (length == 0){// Si la lista esta vacia
                 cout << "La fila esta vacia, ningun elemento para eliminar" << endl;
                 return;
-            } 
-
-            Node *temp = first;
-            if (length == 1){ // Si la fila solo tiene un elemento
-                first = nullptr;
+            }
+            Node* temp = first;
+            first = first->next;
+            if (first == nullptr){
                 last = nullptr;
-                cout << "La fila quedo vacia" << endl;
             }
-            else{
-                first = first->next;
-                delete temp;
-            }
-             // Se elimina el nodo
-            length --;
+            delete temp;
+            // Se elimina el nodo
+            length--;
 
             // Actualizar numeros de grupo, si es necesario
             if (length != 0 && first->grp != 1) updateGroupNum();
@@ -152,6 +144,19 @@ class Queue{
                     temp = temp->next; 
                 }
             }
+        }
+
+                // Metodo que devuelve el primer ELEMENTO (no grupo) de la fila
+        Node* PrimerElemento(){ 
+            if (length == 0){
+                return last;
+            }else {
+                return first;
+            }
+            }
+
+        int longitud(){
+            return length;
         }
 
 };
