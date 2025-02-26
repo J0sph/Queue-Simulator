@@ -2,6 +2,7 @@
 #include <sstream>  // Para usar stringstream
 #include <vector>
 #include "Queue.h"
+#include "VIPQueue.h"
 using namespace std;
 
 void IngresarNombres(vector<string>& names) {
@@ -42,7 +43,8 @@ int main() {
         cout << "1. Agregar grupo\n";
         cout << "2. Unir a un grupo\n";
         cout << "3. Pasar primer grupo\n";
-        cout << "4. Salir\n";
+        cout << "4. Eliminar grupo\n";
+        cout << "5. Salir\n";
         cout << "Seleccione una opción: ";
         cin >> option;
         cin.ignore();  // Ignorar el salto de línea del input anterior
@@ -65,12 +67,19 @@ int main() {
                 cola.showQueue();
                 break;
 
-            case 3:  // Opción para imprimir cola
+            case 3:  // Opción para pasar primer grupo
                 cola.dequeue();
                 cola.showQueue();
                 break;
 
-            case 4:  // Opción para salir
+            case 4:  // Opción para elimianr grupo
+                cout << "Ingrese el número de grupo (presione Enter para terminar): ";
+                cin >> groupID;
+                cola.deleteGroup(groupID);
+                cola.showQueue();
+                break;
+
+            case 5:  // Opción para salir
                 cout << "Saliendo del sistema...\n";
                 return 0;
 
