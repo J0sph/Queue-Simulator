@@ -22,5 +22,10 @@ main: $(ESTRUCT_DIR)/main.cpp $(BUILD_DIR)
 	@echo "Ejecutando $@..."
 	@$(BUILD_DIR)/$@
 
+main2: $(ESTRUCT_DIR)/main2.cpp $(BUILD_DIR)
+	$(CXX) $(CXXFLAGS) -o $(BUILD_DIR)/$@ $<  
+	@echo "Ejecutando $@..."
+	@$(BUILD_DIR)/$@
+
 
 
