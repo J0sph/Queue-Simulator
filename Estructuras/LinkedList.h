@@ -10,6 +10,7 @@ using namespace std;
 class LinkedList {
     public:
         int groupID;  // Identificador de grupo.
+        int priority; // Para el manejo de prioridades en la fila VIP.
         Node* head;   // Puntero al primer nodo de la lista
         Node* tail;   // Puntero al último nodo de la lista
         LinkedList* next; // Puntero a la siguiente lista enlazada (para conectar listas dentro de la cola)
@@ -17,8 +18,8 @@ class LinkedList {
         
         // Constructor
         // Recibe como parámetro un identificador de grupo
-        LinkedList(int groupID) 
-            : groupID(groupID), head(nullptr), tail(nullptr), next(nullptr), length(0) {}
+        LinkedList(int groupID, int priority=0) 
+            : groupID(groupID), priority(priority), head(nullptr), tail(nullptr), next(nullptr), length(0) {}
 
     
         // Destructor que elimina todos los nodos de la lista para liberar memoria
@@ -43,6 +44,20 @@ class LinkedList {
             }
             length++; // Se incrementa la longitud
         }
+
+        vector<string> getMembers() {
+            if(length==0) {
+                return vector<string>();
+            }
+            vector<string> members;
+            Node* temp = head;
+            while(temp){
+                members.push_back(temp->name);
+                temp = temp->next;
+            }
+            return members;
+        }
+        
 
         //Método para mostrar integrantes del grupo
         void showGroup() {
