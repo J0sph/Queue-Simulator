@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "Node.h"  // Incluir la definición de la clase Node
+#include <vector>
 
 using namespace std;
 
@@ -15,13 +16,13 @@ class LinkedList {
         Node* tail;   // Puntero al último nodo de la lista
         LinkedList* next; // Puntero a la siguiente lista enlazada (para conectar listas dentro de la cola)
         int length;   // Longitud de la lista enlazada
-        
+
         // Constructor
         // Recibe como parámetro un identificador de grupo
         LinkedList(int groupID, int priority=0) 
             : groupID(groupID), priority(priority), head(nullptr), tail(nullptr), next(nullptr), length(0) {}
 
-    
+
         // Destructor que elimina todos los nodos de la lista para liberar memoria
         ~LinkedList() {
             while (head) {
@@ -57,7 +58,7 @@ class LinkedList {
             }
             return members;
         }
-        
+
 
         //Método para mostrar integrantes del grupo
         void showGroup() {
@@ -69,10 +70,6 @@ class LinkedList {
             }
         }
 
-
-
-        
-   
 };
 
 #endif // LINKEDLIST_H
