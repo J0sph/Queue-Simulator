@@ -127,6 +127,15 @@ class Queue {
             cout << endl;
         }
 
+        // Método que devuelve el primer grupo
+        LinkedList* PrimerElemento()
+        {
+            if (length == 0){
+                return last;                   // Si no hay grupos sale de la función
+            }else{
+            return first;
+            }
+        }
 };
 
 #endif // QUEUE_H
