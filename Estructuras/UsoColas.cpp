@@ -1,20 +1,3 @@
-/*
-Aca debemos implementar la ejecucion de las colas:
-1. hacer dos colas, la vip y la normal. Solo poder dequeue la normal cuando la vip este vacia. Se puede hacer enqueue a cualquiera
-    Esto lo manejaria asi:
-    Queue vip
-    Queue regular
-    void dequeue():
-        if vip.isempty: regular.dequeue
-        else: vip.dequeue
-
-2. Puse dos metodos dequeue, uno que elimina el grupo completo, y otro que elimina a la primera persona.
-3. Para ingresar personas, se les pregunta si son vips o regulares, y cuantas personas hay en su grupo.
-4. Se tiene la capacidad de 'guardar campo': si alguien de un grupo ya esta metido en la cola, los demas de ese mismo grupo pueden
-    adelantarse y ponerse todos a la par
-
-*/
-
 #include <iostream>
 #include <string>
 #include "Queue.h"
@@ -25,6 +8,40 @@ Aca debemos implementar la ejecucion de las colas:
 #include <SFML/Graphics.hpp>
 
 using namespace std;
+// Estructura básica para un botón
+struct Boton {
+    sf::RectangleShape shape;
+    sf::Text text;
+
+    Boton(float x, float y, const std::string &texto, sf::Font &font) : text(font) {
+        shape.setSize({200, 50});
+        shape.setPosition({x, y});
+        shape.setFillColor(sf::Color::Blue);
+
+        text.setFont(font);
+        text.setString(texto);
+        text.setCharacterSize(20);
+        text.setFillColor(sf::Color::White);
+        text.setPosition({x + 10, y + 10});
+    }
+
+    void draw(sf::RenderWindow &window) {
+        window.draw(shape);
+        window.draw(text);
+    }
+
+    bool isClicked(sf::Vector2f mousePos) {
+        return shape.getGlobalBounds().contains(mousePos);
+    }
+};
+
+enum Estado {
+    INICIAL,
+    SELECCIONAR_TIPO,  // Mostrar VIP/Regular
+    INGRESAR_NOMBRE,   // Introducir texto
+    ELIMINAR_GRUPO,
+    MOVER_GRUPO
+};
 
 VIPQueue CVIP;
 Queue CRegular;
@@ -59,8 +76,8 @@ void IngresarNombres(vector<string>& names) {
     while (ss >> name) {
         names.push_back(name);
     }
-
 }
+
 
 void AgregarElementoACola(bool VIP, const vector<string>& miembros, int Prioridad){
     if (VIP == true)
@@ -82,7 +99,6 @@ void ColaPorPrioridad() {
         movRegular.offset = 0;
     }
 }
-
 
 void Elementos(sf::RenderWindow &window, Queue &queue, int y, sf::Color color, Movimiento &mov) {
     if (queue.isEmpty()) return;
@@ -112,35 +128,34 @@ void Elementos(sf::RenderWindow &window, Queue &queue, int y, sf::Color color, M
 }
 
 
-// Script de prueba
-int main(){
+int main() {
     int option;  // Para elegir las opciones del menú
-int salir = 0;
-
-vector<string> names;
-int groupID;
-int priority;
-int SVIP;
-
-// Declaramos el stringstream fuera del switch
-
-while (salir != 9) {
-    // Mostrar el menú de opciones
-    cout << "\n=== Menú ===\n";
-    cout << "1. Agregar grupo\n";
-    cout << "2. Salir\n";
-    cout << "3. Mostrar Grupo\n";
-    cout << "Seleccione una opción: ";
-    cin >> option;
-    cin.ignore();  // Ignorar el salto de línea del input anterior
-
-    switch (option) {
-        case 1:  // Opción para agregar nombres
-            IngresarNombres(names);
-            cout << "Presione 1 si es VIP o 2 si es regular" << endl;
-            cin >> SVIP;
-            if (SVIP == 1){
-            cout << "Ingrese el número de prioridad (presione Enter para terminar): ";
+    int salir = 0;
+    
+    vector<string> names;
+    int groupID;
+    int priority;
+    int SVIP;
+    
+    // Declaramos el stringstream fuera del switch
+    
+    while (salir != 9) {
+        // Mostrar el menú de opciones
+        cout << "\n=== Menú ===\n";
+        cout << "1. Agregar grupo\n";
+        cout << "2. Salir\n";
+        cout << "3. Mostrar Grupo\n";
+        cout << "Seleccione una opción: ";
+        cin >> option;
+        cin.ignore();  // Ignorar el salto de línea del input anterior
+    
+        switch (option) {
+            case 1:  // Opción para agregar nombres
+                IngresarNombres(names);
+                cout << "Presione 1 si es VIP o 2 si es regular" << endl;
+                cin >> SVIP;
+                if (SVIP == 1){
+                cout << "Ingrese el número de prioridad (presione Enter para terminar): ";
             cin >> priority;
             AgregarElementoACola(true, names, priority);
             names.clear();  // Limpiar el vector para el siguiente uso
@@ -165,23 +180,122 @@ while (salir != 9) {
     }
 }
 
-    sf::RenderWindow window(sf::VideoMode({900, 600}), "Cola en el parque de Diversiones");
+    sf::RenderWindow window(sf::VideoMode({900, 700}), "Cola en el parque de Diversiones");
     sf::Clock relog;
-    while (window.isOpen()){
+    sf::Font font;
+    if (!font.openFromFile("C:\\Users\\josep\\OneDrive\\Escritorio\\Cosas de Joseph\\Prueba2\\Fonts\\arial.ttf")) {
+        return -1;
+    }
+
+    Boton btnAgregar(100, 500, "Agregar", font);
+    Boton btnEliminar(350, 500, "Eliminar", font);
+    Boton btnMover(600, 500, "Mover", font);
+
+    Boton btnVIP(200, 600, "VIP", font);
+    Boton btnRegular(500, 600, "Regular", font);
+
+    Estado estado = INICIAL;
+    string inputText = "";  // Almacena texto o número ingresado
+    bool capturandoTexto = false;  // Controla si el usuario está escribiendo
+
+    string tipoGrupo = "";  // VIP o Regular
+    int numeroGrupo = -1;  // Para eliminar o mover
+
+    sf::Text textoIngresado(font);
+    textoIngresado.setString("");
+    textoIngresado.setCharacterSize(24);
+    textoIngresado.setPosition({300, 400});
+    textoIngresado.setFillColor(sf::Color::White);
+
+    while (window.isOpen()) {
         sf::Time actual = relog.getElapsedTime();
-        while (const optional event = window.pollEvent()){
+        while (const optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>()){
                 window.close();
             }
+            if (event->is<sf::Event::TextEntered>() && capturandoTexto) {
+                const auto* textEvent = event->getIf<sf::Event::TextEntered>();
+                if (textEvent->unicode < 128) {
+                    char letra = static_cast<char>(textEvent->unicode);
+                    if (letra == '\b') {
+                        if (!inputText.empty()) {
+                            inputText.pop_back(); 
+                        }
+                    } else if (letra == '\r') {  // Enter
+                        if (estado == INGRESAR_NOMBRE) {
+                            istringstream stream(inputText);
+                            string nombre;
+                            while(stream >> nombre){
+                                names.push_back(nombre);
+                            }
+                            AgregarElementoACola(true, names, 1);
+                            names.clear();  // Limpiar el vector para el siguiente uso
+                            std::cout << "Nombre ingresado para grupo " << tipoGrupo << ": " << inputText << std::endl;
+                        } else if (estado == ELIMINAR_GRUPO || estado == MOVER_GRUPO) {
+                            numeroGrupo = std::stoi(inputText);
+                            std::cout << "Número de grupo seleccionado: " << numeroGrupo << std::endl;
+                        }
+                        capturandoTexto = false;
+                        inputText = "";
+                        estado = INICIAL;  // Volver al menú inicial
+                    } else {
+                        inputText += letra;
+                    }
+                    textoIngresado.setString("Ingresando: " + inputText);
+                }
+            }
+
+            if (event->is<sf::Event::MouseButtonPressed>()) {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                if (estado == INICIAL) {
+                    if (btnAgregar.isClicked(sf::Vector2f(mousePos))) {
+                        estado = SELECCIONAR_TIPO;
+                    } else if (btnEliminar.isClicked(sf::Vector2f(mousePos))) {
+                        estado = ELIMINAR_GRUPO;
+                        capturandoTexto = true;
+                    } else if (btnMover.isClicked(sf::Vector2f(mousePos))) {
+                        estado = MOVER_GRUPO;
+                        capturandoTexto = true;
+                    }
+                } else if (estado == SELECCIONAR_TIPO) {if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
+                    tipoGrupo = "VIP";
+                    estado = INGRESAR_NOMBRE;
+                    capturandoTexto = true;
+                } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
+                    tipoGrupo = "Regular";
+                    estado = INGRESAR_NOMBRE;
+                    capturandoTexto = true;
+                }
+            }
         }
-        if (actual.asSeconds() > 2){
-            ColaPorPrioridad();
-            relog.restart();
-        }
-        window.clear();
-        Elementos(window, CVIP, 100, sf::Color::Red, movVIP);
-        Elementos(window, CRegular, 200, sf::Color::Blue, movRegular);
-        window.display();
     }
-    return 0;
+    if (actual.asSeconds() > 2){
+        ColaPorPrioridad();
+        relog.restart();
+    }
+
+    window.clear();
+    Elementos(window, CVIP, 100, sf::Color::Red, movVIP);
+    Elementos(window, CRegular, 200, sf::Color::Blue, movRegular);
+    // Mostrar botones iniciales
+    btnAgregar.draw(window);
+    btnEliminar.draw(window);
+    btnMover.draw(window);
+
+    // Mostrar botones VIP/Regular si está en ese estado
+    if (estado == SELECCIONAR_TIPO) {
+        btnVIP.draw(window);
+        btnRegular.draw(window);
+    }
+
+    // Mostrar texto en edición
+    if (capturandoTexto) {
+        window.draw(textoIngresado);
+    }
+
+    window.display();
+}
+
+return 0;
 }
