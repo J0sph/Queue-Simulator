@@ -147,13 +147,12 @@ void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color,
 }
 
 // Metodo que permite que un grupo regular haga 'upgrade' a vip
-void upgradeToVip(int groupID){
+void upgradeToVip(int groupID, int prioridad){
     // Borra el grupo de la cola regular
     vector<string> integrantes = CRegular.deleteGroup(groupID);
    
     // Ingresa el grupo en la VIP
-    int longitudCola = CVIP.getLength();
-    CVIP.enqueue(integrantes, longitudCola);
+    CVIP.enqueue(integrantes, prioridad);
     
 }
 
