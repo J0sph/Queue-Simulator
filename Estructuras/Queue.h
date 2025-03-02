@@ -136,6 +136,13 @@ class Queue {
             return first;
             }
         }
+
+        // Metodo para obtener la longitud de la cola
+        int getLength(){
+            return length;
+        }
+
+
 };
 
 #endif // QUEUE_H
