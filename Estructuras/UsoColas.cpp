@@ -6,6 +6,8 @@
 #include <sstream>  // Para usar stringstream
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <optional>
+
 
 using namespace std;
 // Estructura básica para un botón
@@ -13,7 +15,7 @@ struct Boton {
     sf::RectangleShape shape;
     sf::Text text;
 
-    Boton(float x, float y, const std::string &texto, sf::Font &font) : text(font) {
+    Boton(float x, float y, const std::string &texto, sf::Font &font) : text(texto, font) {
         shape.setSize({200, 50});
         shape.setPosition({x, y});
         shape.setFillColor(sf::Color::Blue);
@@ -107,26 +109,34 @@ void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color,
     LinkedList* temp = queue.PrimerElemento();
     float x = 250 - mov.offset; // Aplicar desplazamiento inicial
 
+    sf::Font font;
+        if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+            cout << "No cargó la fuente correctamente" << endl;
+            return;
+        }
+
     while (temp != nullptr) {
         sf::RectangleShape Elemento(sf::Vector2f(AnchoElemento, LargoElemento));
-        sf::Font font;
-        if (!font.openFromFile("C:\\Users\\josep\\OneDrive\\Escritorio\\Cosas de Joseph\\Prueba2\\Fonts\\arial.ttf")) {
-            cout << "No cargó la fuente correctamente" << endl;
-        }
-        sf::Text numero(font);
-        sf::Text Grupo(font);
         Elemento.setPosition(sf::Vector2f(x, y));
         Elemento.setFillColor(color);
+        
+        sf::Text numero;
+        numero.setFont(font);
         string NG = to_string(temp->groupID);
         numero.setString(NG);
         numero.setCharacterSize(20);
         numero.setFillColor(sf::Color::White);
         numero.setPosition(sf::Vector2f(x+80, y+10));
+
+
+        sf::Text Grupo;
+        Grupo.setFont(font);    
         string G = "Grupo: ";
         Grupo.setString(G);
         Grupo.setCharacterSize(20);
         Grupo.setFillColor(sf::Color::White);
         Grupo.setPosition(sf::Vector2f(x+10, y+10));
+
         window.draw(Elemento);
         window.draw(numero);
         window.draw(Grupo);
@@ -155,8 +165,11 @@ int main() {
     int groupID;
     int priority;
     int SVIP;
-    
-    // Declaramos el stringstream fuera del switch
+
+    Estado estado = INICIAL;
+    string tipoGrupo = "";  // VIP o Regular    
+    int numeroGrupo = -1;
+
     
     while (salir != 9) {
         // Mostrar el menú de opciones
@@ -168,20 +181,21 @@ int main() {
         cin.ignore();  // Ignorar el salto de línea del input anterior
     
         switch (option) {
-            case 1:  // Opción para agregar nombres
+            case 1:  {// Opción para agregar nombres
                 IngresarNombres(names);
                 cout << "Presione 1 si es VIP o 2 si es regular" << endl;
                 cin >> SVIP;
                 if (SVIP == 1){
                 cout << "Ingrese el número de prioridad (presione Enter para terminar): ";
-            cin >> priority;
+                cin >> priority;
             AgregarElementoACola(true, names, priority);
             names.clear();  // Limpiar el vector para el siguiente uso
             break;
-        }else if (SVIP == 2){
+          }else if (SVIP == 2){
                 priority = 0;
                 AgregarElementoACola(false, names, priority);
                 names.clear();  // Limpiar el vector para el siguiente 
+          }
                 break;  
             }
         case 2:  // Opción para salir
@@ -190,13 +204,13 @@ int main() {
         default:
             cout << "Opción inválida. Intente nuevamente.\n";
             break;
+        }
     }
-}
 
     sf::RenderWindow window(sf::VideoMode({900, 700}), "Cola en el parque de Diversiones");
     sf::Clock relog;
     sf::Font font;
-    if (!font.openFromFile("C:\\Users\\josep\\OneDrive\\Escritorio\\Cosas de Joseph\\Prueba2\\Fonts\\arial.ttf")) {
+    if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
         return -1;
     }
 
@@ -207,104 +221,140 @@ int main() {
     Boton btnVIP(200, 600, "VIP", font);
     Boton btnRegular(500, 600, "Regular", font);
 
-    Estado estado = INICIAL;
-    string inputText = "";  // Almacena texto o número ingresado
-    bool capturandoTexto = false;  // Controla si el usuario está escribiendo
-
-    string tipoGrupo = "";  // VIP o Regular
-    int numeroGrupo = -1;  // Para eliminar o mover
-
-    sf::Text textoIngresado(font);
-    textoIngresado.setString("");
+    sf::Text textoIngresado;
+    textoIngresado.setFont(font);
     textoIngresado.setCharacterSize(24);
     textoIngresado.setPosition({300, 400});
     textoIngresado.setFillColor(sf::Color::White);
 
+    sf::Text MensajeInstruccion;
+    MensajeInstruccion.setFont(font);
+    MensajeInstruccion.setCharacterSize(24);
+    MensajeInstruccion.setPosition({300, 350});
+    MensajeInstruccion.setFillColor(sf::Color::White);
+    MensajeInstruccion.setString("Ingrese los nombres separados por espacio y presione enter cuando finalice, posteriormente ingrese la prioridad del grupo");
+
+    bool capturandoTexto = false;  // Controla si el usuario está escribiendo
+    bool mostrarMensajeInstruccion = false;
+    string inputText = "";
+
+    sf::Time actual;
     while (window.isOpen()) {
-        sf::Time actual = relog.getElapsedTime();
-        while (const optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()){
+        actual = relog.getElapsedTime();
+        sf::Event event;
+
+        while (window.pollEvent(event)) {
+            if (event.type==sf::Event::Closed){
                 window.close();
             }
-            if (event->is<sf::Event::TextEntered>() && capturandoTexto) {
-                const auto* textEvent = event->getIf<sf::Event::TextEntered>();
-                if (textEvent->unicode < 128) {
-                    char letra = static_cast<char>(textEvent->unicode);
-                    if (letra == '\b') {
-                        if (!inputText.empty()) {
-                            inputText.pop_back(); 
-                        }
+            if (event.type == sf::Event::TextEntered && capturandoTexto) {
+                char letra = static_cast<char>(event.text.unicode);
+                if (letra == '\b' && !inputText.empty()) {
+                       inputText.pop_back(); 
+                    
+                            
                     } else if (letra == '\r') {  // Enter
-                        if (estado == INGRESAR_NOMBRE) {
+                        if (estado == INGRESAR_NOMBRE) {              
                             istringstream stream(inputText);
                             string nombre;
                             while(stream >> nombre){
                                 names.push_back(nombre);
                             }
                             if(tipoGrupo == "VIP"){
-                            AgregarElementoACola(true, names, 1);
-                            names.clear();  // Limpiar el vector para el siguiente uso
+                                AgregarElementoACola(true, names, 1);
+                                
                             }else {
                                 AgregarElementoACola(false, names, 1);
-                                names.clear();  // Limpiar el vector para el siguiente uso
                             }
-                            std::cout << "Nombre ingresado para grupo " << tipoGrupo << ": " << inputText << std::endl;
-                        } else if (estado == INGRESAR_GRUPO) {
-                            numeroGrupo = std::stoi(inputText);
+                                names.clear();  
+                                capturandoTexto = false;
+                                inputText = "";
+                                estado = INICIAL;
+                                mostrarMensajeInstruccion = false;
+                                MensajeInstruccion.setString("");
+                        } else if (estado == INGRESAR_GRUPO) {   
+                                numeroGrupo = std::stoi(inputText);    
+                    
                             if (tipoGrupo == "VIP"){
                             CVIP.deleteGroup(numeroGrupo);
                             }else {
                                 CRegular.deleteGroup(numeroGrupo);
                             }
-                            std::cout << "Número de grupo seleccionado: " << numeroGrupo << std::endl;
-                        }else if(estado == MOVER_GRUPO){
-                            numeroGrupo = std::stoi(inputText);
-                            std::cout << "Número de grupo seleccionado: " << numeroGrupo << std::endl;
+                            capturandoTexto = false;
+                            inputText="";
+                            estado = INICIAL;  
+                            mostrarMensajeInstruccion = false;
+                            MensajeInstruccion.setString("");
+
+                            estado = INICIAL;
                         }
-                        capturandoTexto = false;
-                        inputText = "";
-                        estado = INICIAL;  // Volver al menú inicial
-                    } else {
+                    
+                        } else {
                         inputText += letra;
-                    }
+                        }
+
                     textoIngresado.setString("Ingresando: " + inputText);
                 }
-            }
+            
 
-            if (event->is<sf::Event::MouseButtonPressed>()) {
+            if (event.type == sf::Event::MouseButtonPressed) {
                 sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
                 if (estado == INICIAL) {
                     if (btnAgregar.isClicked(sf::Vector2f(mousePos))) {
                         estado = SELECCIONAR_TIPO;
+                        capturandoTexto = false;
+                        mostrarMensajeInstruccion = false;
+                    
                     } else if (btnEliminar.isClicked(sf::Vector2f(mousePos))) {
                         estado = ELIMINAR_GRUPO;
-                        capturandoTexto = true;
+                        capturandoTexto = false;
+                        mostrarMensajeInstruccion = false;
+                    
                     } else if (btnMover.isClicked(sf::Vector2f(mousePos))) {
                         estado = MOVER_GRUPO;
                         capturandoTexto = true;
+                        capturandoTexto = false;
+                        mostrarMensajeInstruccion = false;
                     }
-                } else if (estado == SELECCIONAR_TIPO) {if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
+                } else if (estado == SELECCIONAR_TIPO) {
+                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
                     tipoGrupo = "VIP";
                     estado = INGRESAR_NOMBRE;
                     capturandoTexto = true;
+                    mostrarMensajeInstruccion = true;
+                    MensajeInstruccion.setString("Ingrese los nombres separados por espacio y presione enter cuando finalice");
+                   
                 } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
                     tipoGrupo = "Regular";
                     estado = INGRESAR_NOMBRE;
                     capturandoTexto = true;
+                    mostrarMensajeInstruccion = true;
+                    MensajeInstruccion.setString("Ingrese los nombres separados por espacio y presione enter cuando finalice");
+                
                 }
-                }else if (estado == ELIMINAR_GRUPO) {if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
+                
+            }else if (estado == ELIMINAR_GRUPO) {
+                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
                     tipoGrupo = "VIP";
                     estado = INGRESAR_GRUPO;
                     capturandoTexto = true;
-                } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
+                    mostrarMensajeInstruccion = true;
+                    MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
+                    } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
                     tipoGrupo = "Regular";
                     estado = INGRESAR_GRUPO;
                     capturandoTexto = true;
+                    mostrarMensajeInstruccion = true;
+                    MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
+                
                 }
+            
             }
         }
     }
+    
+
     if (actual.asSeconds() > 5){
         ColaPorPrioridad();
         relog.restart();
@@ -324,6 +374,10 @@ int main() {
         btnRegular.draw(window);
     }
 
+    if(mostrarMensajeInstruccion){
+        window.draw(MensajeInstruccion);
+    }
+  
     // Mostrar texto en edición
     if (capturandoTexto) {
         window.draw(textoIngresado);
