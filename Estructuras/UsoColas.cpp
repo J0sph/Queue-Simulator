@@ -273,7 +273,7 @@ int main() {
                             if(tipoGrupo == "VIP"){
                                 AgregarElementoACola(true, names, 1);
                                 
-                            }else {
+                            } else {
                                 AgregarElementoACola(false, names, 1);
                             }
                                 names.clear();  
@@ -282,21 +282,38 @@ int main() {
                                 estado = INICIAL;
                                 mostrarMensajeInstruccion = false;
                                 MensajeInstruccion.setString("");
+
                         } else if (estado == INGRESAR_GRUPO) {   
                                 numeroGrupo = std::stoi(inputText);    
                     
                             if (tipoGrupo == "VIP"){
                             CVIP.deleteGroup(numeroGrupo);
-                            }else {
+                            } else {
                                 CRegular.deleteGroup(numeroGrupo);
                             }
+
                             capturandoTexto = false;
                             inputText="";
                             estado = INICIAL;  
                             mostrarMensajeInstruccion = false;
                             MensajeInstruccion.setString("");
 
-                            estado = INICIAL;
+                        } else if(estado == MOVER_GRUPO) {
+
+                           int numeroGrupo = std::stoi(inputText);
+                            vector<string> integrantes = CRegular.deleteGroup(numeroGrupo);
+                            if (!integrantes.empty()) {
+                                int prioridad = 1;
+
+                                CVIP.enqueue(integrantes, prioridad);
+
+                            }
+                            
+                            capturandoTexto = false;
+                            inputText="";
+                            estado = INICIAL;  
+                            mostrarMensajeInstruccion = false;
+                            MensajeInstruccion.setString("");
                         }
                     
                         } else {
@@ -324,8 +341,8 @@ int main() {
                     } else if (btnMover.isClicked(sf::Vector2f(mousePos))) {
                         estado = MOVER_GRUPO;
                         capturandoTexto = true;
-                        capturandoTexto = false;
-                        mostrarMensajeInstruccion = false;
+                        mostrarMensajeInstruccion = true;
+                        MensajeInstruccion.setString("Ingrese el número de grupo a mover");
                     }
                 } else if (estado == SELECCIONAR_TIPO) {
                     if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
@@ -344,7 +361,7 @@ int main() {
                 
                 }
                 
-            }else if (estado == ELIMINAR_GRUPO) {
+            } else if (estado == ELIMINAR_GRUPO) {
                     if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
                     tipoGrupo = "VIP";
                     estado = INGRESAR_GRUPO;
@@ -360,6 +377,13 @@ int main() {
                 
                 }
             
+            }else if (estado == MOVER_GRUPO) {
+                    if(!capturandoTexto){
+                        capturandoTexto = true;
+                        mostrarMensajeInstruccion = true;
+                        MensajeInstruccion.setString("Ingrese el número de grupo a mover");
+                    } 
+                
             }
         }
     }
@@ -398,3 +422,4 @@ int main() {
 
 return 0;
 }
+

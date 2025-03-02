@@ -52,6 +52,31 @@ class VIPQueue : public Queue{
 
         }
 
+        void enqueue(LinkedList* newgroup){
+            if (!newgroup) return;
+            newgroup->next = nullptr;
+            if (length==0){
+                first = last = newgroup;
+            } else if (newgroup->priority < first->priority){
+                newgroup->next = first;
+                first = newgroup;
+            } else if (newgroup->priority >= last->priority){
+                last->next = newgroup;
+                last = newgroup;
+            } else {
+                LinkedList* temp = first;
+                while (newgroup->priority >= temp->next->priority){
+                    temp = temp->next;
+                }
+                newgroup->next = temp->next;
+                temp->next = newgroup;               
+            }
+            length++;
+        
+            
+
+        }
+
 };
 
 #endif // VIPQUEUE_H

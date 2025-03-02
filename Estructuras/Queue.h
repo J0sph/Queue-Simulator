@@ -83,35 +83,48 @@ class Queue {
             if(length == 0){ // Si la lista está vacía no hace nada.
                 return vector<string>(); // No se eliminó ningún Grupo.
             }
-            vector<string> members;
+
             if(groupID == first->groupID){ // Si el ID se encuetra en el primer grupo, se elimina similar al método dequeue.
                 LinkedList* temp = first; // Selecciona el primer grupo
                 first = first->next; // Ahora el primero va a ser el grupo siguiente (nullptr si no hay nadie)
-                members = temp->getMembers();
-                delete temp; //Elimina el grupo de la fila
+                if(!first) last = nullptr; //Si la lista queda vacía el último apunta a nullptr
                 length --; //Se reduce la longitud de la cola
-                if (!first) last = nullptr; //Si la lista queda vacía el último apunta a nullptr
-                if(length==0){
-                    nextGroupID = 1;
-                }
-                return members; // Sí se eliminó un grupo.
+                
+                vector<string> members = temp->getMembers(); 
+                delete temp; //Elimina el grupo de la fila
+                return members; // Se elimina el grupo.
+
             } else{ // Si no, se recorre la lista hasta encontrar el valor.
                 LinkedList* temp = first;
                 while(temp->next){ // El ciclo continúa hasta el final de la lista.
                     if(temp->next->groupID == groupID){ // Verifica si el valor a eliminar es el del grupo siguiente a temp. 
                         LinkedList* delGroup = temp->next; // Crea un puntero para ubicar el grupo a eliminar.
-                        if(delGroup == last){ // Si el grupo a eliminar es el último cambia last al grupo anterior.
-                            last = temp;
-                        } 
                         temp->next = temp->next->next; // Se conecta el grupo temp, al grupo siguiente al que se va a eliminar.
-                        members = temp->getMembers();
-                        delete delGroup; // Se elimina el grupo.
-                        return members; // Sí se eliminó un grupo.
+                        if(delGroup == last){ // Si el grupo a eliminar es el último, se actualiza el puntero last.
+                            last = temp;
+                        }
+                        length--; // Se reduce la longitud de la cola.
+                        
+                        vector<string> members = delGroup->getMembers(); 
+                        delete delGroup; //Elimina el grupo de la fila
+                        return members; // Se elimina el grupo.
+                      
                     }
                     temp = temp->next; // Si no encuntra el valor, pasa al siguiente grupo.
                 }
                 return vector<string>(); // No se eliminó ningún nodo.
             }
+        }
+
+        LinkedList* getGroup(int groupID){
+            LinkedList* temp = first; 
+            while (temp) { 
+                if (temp->groupID == groupID){ 
+                    return temp; 
+                }
+                temp = temp->next; 
+            }
+            return nullptr;
         }
 
         // Mostrar la cola de grupos
