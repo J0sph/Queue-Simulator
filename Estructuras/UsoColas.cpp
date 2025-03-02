@@ -103,6 +103,48 @@ void ColaPorPrioridad() {
     }
 }
 
+int CalcularTiempoEspera(int posicion){
+    int TiempoPorGrupo = 5;
+    return posicion * TiempoPorGrupo;
+}
+
+void DetallesGrupos(int groupID, bool isVIP, sf::RenderWindow& window, sf:: Font& font){
+    Queue& cola = isVIP ? CVIP : CRegular;
+    LinkedList* grupo = cola.getGroup(groupID);
+
+    if (grupo != nullptr) {
+    vector<string> members = grupo->getMembers();
+    int TiempoEstimado = CalcularTiempoEspera(groupID);
+    
+    sf::Text DetallesGrupo;
+    DetallesGrupo.setFont(font);
+    DetallesGrupo.setCharacterSize(21);
+    DetallesGrupo.setFillColor(sf::Color::White);
+    DetallesGrupo.setPosition(300, 150);
+
+    string texto = "Grupo: " + to_string(groupID) + "\n";
+    texto += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
+    texto += "Integrantes: \n";
+    for (const string& member : members) {
+        texto += member + "\n";
+    }
+    DetallesGrupo.setString(texto);
+
+    window.clear();
+    window.draw(DetallesGrupo);
+    window.display();
+
+    sf::Event event;
+    while (window.waitEvent(event)) {
+        if (event.type == sf::Event::KeyPressed) {
+            break;
+        }
+    }  
+
+    }
+}
+
+
 void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color, Movimiento &mov) {
     if (queue.isEmpty()) return;
     
@@ -344,6 +386,51 @@ int main() {
                         mostrarMensajeInstruccion = true;
                         MensajeInstruccion.setString("Ingrese el número de grupo a mover");
                     }
+
+                    for (int i = 0; i < CVIP.getLength(); i++) {
+                        sf::FloatRect cuadroVIP(250+i*(AnchoElemento+DistanciaEntreElementos), 100, AnchoElemento, LargoElemento);
+                        if (cuadroVIP.contains(mousePos.x, mousePos.y)) {
+                            LinkedList* grupo = CVIP.getGroup(i + 1);
+                            if (grupo != nullptr) {
+                            vector<string> members = grupo->getMembers();
+                            int TiempoEstimado = i*5;
+
+                            string detalle = "Grupo: " + to_string(i + 1) + "\n";
+                            detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
+                            detalle += "Integrantes: \n";
+                            for (const auto& member : members) {
+                                detalle +="-" + member + "\n";                                                       
+                            }
+                            MensajeInstruccion.setString(detalle);
+                            mostrarMensajeInstruccion = true;
+                            }
+                            break;
+                        }
+                    }
+
+                    for (int i = 0; i < CRegular.getLength(); i++) {
+                        sf::FloatRect cuadroRegular(250+i*(AnchoElemento+DistanciaEntreElementos), 200, AnchoElemento, LargoElemento);
+                        if (cuadroRegular.contains(mousePos.x, mousePos.y)) {
+                            LinkedList* grupo = CRegular.getGroup(i + 1);
+                            if (grupo != nullptr) {
+                            vector<string> members = grupo->getMembers();
+                            int TiempoEstimado = i*5;
+
+                            string detalle = "Grupo: " + to_string(i + 1) + "\n";
+                            detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
+                            detalle += "Integrantes: \n";
+                            for (const auto& member : members) {
+                                detalle +="-" + member + "\n";                                                       
+                            }
+                            MensajeInstruccion.setString(detalle);
+                            mostrarMensajeInstruccion = true;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    
                 } else if (estado == SELECCIONAR_TIPO) {
                     if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
                     tipoGrupo = "VIP";
