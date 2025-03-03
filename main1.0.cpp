@@ -45,7 +45,7 @@ enum Estado { //Estados para controlar el flujo de ejecución
     INGRESAR_GRUPO, //Se seleccionó el botón eliminar y se pidió al usuario que dijite el grupo al que se le desea realizar la acción
     INGRESAR_PRIORIDAD, //Se seleccionó agregar Vip y se le pide al usuario que dijite la prioridad
     MOVER_GRUPO, //Se seleccionó el botón mover
-    CAMBIAR_PRIORIDAD // Se seleccionó el botón cambiar prioridad y se le pide al usuario número de grupo y prioridad
+    CAMBIAR_PRIORIDAD // Se seleccionó el botón cambiar prioridad y se le pide al usuario numero de grupo y prioridad
 };
 
 VIPQueue CVIP; //Se crea la cola VIP
@@ -143,7 +143,7 @@ void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color,
         sf::RectangleShape Elemento(sf::Vector2f(AnchoElemento, LargoElemento)); //Se asignan las caracteristicas de los rectangulos
         Elemento.setPosition(sf::Vector2f(x, y));
         Elemento.setFillColor(color);
-        //Se asignan las características del texto correspondiente al número de grupo de cada rectángulo
+        //Se asignan las características del texto correspondiente al numero de grupo de cada rectángulo
         sf::Text numero;
         numero.setFont(font);
         string NG = to_string(temp->groupID);
@@ -290,7 +290,7 @@ int main() {
                             mostrarMensajeInstruccion = false; // Se oculta el mensaje
                             MensajeInstruccion.setString(""); // Se limpia el conenido del mensaje
                             } catch (const std::invalid_argument& e){  // Si se da un error presenta un texto de depuración notificandolo 
-                                MensajeInstruccion.setString("Error: Ingrese un número entero");
+                                MensajeInstruccion.setString("Error: Ingrese un numero entero");
                                 inputText = "";
                             }
                             
@@ -299,9 +299,9 @@ int main() {
                             numeroGrupo = std::stoi(inputText); // Convierte lo ingresado a un entero
 
                             if (tipoGrupo == "VIP"){
-                                CVIP.deleteGroup(numeroGrupo); // Elimina un VIP identificado por el número de grupo
+                                CVIP.deleteGroup(numeroGrupo); // Elimina un VIP identificado por el numero de grupo
                             } else {
-                                CRegular.deleteGroup(numeroGrupo); // Elimina un grupo regular identificado por el número de grupo
+                                CRegular.deleteGroup(numeroGrupo); // Elimina un grupo regular identificado por el numero de grupo
                             }
                             capturandoTexto = false; // Se detiene la captura de texto
                             inputText = ""; // Se limpia el texto ingresado
@@ -324,7 +324,7 @@ int main() {
                             estado = INICIAL;  
                             mostrarMensajeInstruccion = false; // Se oculta el mensaje
                             MensajeInstruccion.setString(""); // Se limpia el contenido del mensaje
-                        }
+                        
 
                         } else if(estado == CAMBIAR_PRIORIDAD){
 
@@ -332,7 +332,7 @@ int main() {
 
                             try{
                                 istringstream ss(inputText); // Se convierte el texto ingresado a un entero
-                                ss >> numgrupo >> prioridad; // Se asigna el número de grupo y la prioridad
+                                ss >> numgrupo >> prioridad; // Se asigna el numero de grupo y la prioridad
 
                                 CVIP.updatePriority(numgrupo,prioridad); // Se actualiza la prioridad del grupo
                             
@@ -343,11 +343,12 @@ int main() {
                                 MensajeInstruccion.setString(""); // Se limpia el contenido del mensaje
 
                                 } catch (const std::invalid_argument& e){ // Si se da un error presenta un texto de depuración notificandolo
-                                    MensajeInstruccion.setString("Error: Ingrese un número entero");
+                                    MensajeInstruccion.setString("Error: Ingrese un numero entero");
                                     inputText = "";
                                 }
                                 
                         
+                            }         
                     
                         } else {
                         inputText += letra; // Se agrega lo imgresado al texto actual
@@ -375,13 +376,13 @@ int main() {
                         estado = MOVER_GRUPO;
                         capturandoTexto = true;
                         mostrarMensajeInstruccion = true;
-                        MensajeInstruccion.setString("Ingrese el número de grupo a mover");
+                        MensajeInstruccion.setString("Ingrese el numero de grupo a mover");
                     
                     } else if (btnCambioPrioridad.isClicked(sf::Vector2f(mousePos))) { // Boton cambiar prioridad 
                         estado = CAMBIAR_PRIORIDAD; // Se activa el estado de cambiar prioridad
                         capturandoTexto = true; // Se activa la captura de texto
                         mostrarMensajeInstruccion = true; // Se muestra el mensaje 
-                        MensajeInstruccion.setString("Ingrese el número de grupo y la nueva prioridad separados por espacio");
+                        MensajeInstruccion.setString("Ingrese el numero de grupo y la nueva prioridad separados por espacio");
                     }
 
                     for (int i = 0; i < CVIP.getLength(); i++) { 
@@ -456,13 +457,13 @@ int main() {
                     estado = INGRESAR_GRUPO; // Se pasa al estado de ingresar grupo
                     capturandoTexto = true; // Se activa la captura
                     mostrarMensajeInstruccion = true; // Se activa el mensaje
-                    MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
+                    MensajeInstruccion.setString("Ingrese el numero de grupo a eliminar");
                     } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) { // Click en el boton de Regular
                     tipoGrupo = "Regular"; // Se selecciona el tipo de grupo
                     estado = INGRESAR_GRUPO; // Se pasa al estado de ingresar grupo
                     capturandoTexto = true;     // Se activa la captura
                     mostrarMensajeInstruccion = true; // Se activa el mensaje
-                    MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
+                    MensajeInstruccion.setString("Ingrese el numero de grupo a eliminar");
                 
                 }
             
@@ -470,14 +471,14 @@ int main() {
                     if(!capturandoTexto){ //Si no se está capturando texto se activa la captura de texto y se muestra el mensaje 
                         capturandoTexto = true;
                         mostrarMensajeInstruccion = true;
-                        MensajeInstruccion.setString("Ingrese el número de grupo a mover");
+                        MensajeInstruccion.setString("Ingrese el numero de grupo a mover");
                     } 
                 
             } else if (estado == CAMBIAR_PRIORIDAD) { //Si el estado es cambiar prioridad
                     if(!capturandoTexto){ //Si no se está capturando texto se activa la captura de texto y se muestra el mensaje
                         capturandoTexto = true;
                         mostrarMensajeInstruccion = true;
-                        MensajeInstruccion.setString("Ingrese el número de grupo y la nueva prioridad separados por espacio");
+                        MensajeInstruccion.setString("Ingrese el numero de grupo y la nueva prioridad separados por espacio");
                     } 
 
             }
