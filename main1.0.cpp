@@ -430,8 +430,8 @@ int main() {
                             }
 
                             break;
-                        
-                        
+                        }
+                    }
 
                     
                 } else if (estado == SELECCIONAR_TIPO) { //Si el estado es seleccionar tipo se activan los botones VIP y Regular
