@@ -285,12 +285,12 @@ int main() {
                             }
                             names.clear(); //Se limpia el vector names
                             capturandoTexto = false; //Se vuelve al estado inicial para esperar la nueva acción del usuario
-                            inputText = ""; // Se reinicia o limpia la entrada de texto
-                            estado = INICIAL; 
-                            mostrarMensajeInstruccion = false; // Se oculta el mensaje
-                            MensajeInstruccion.setString(""); // Se limpia el conenido del mensaje
-                            } catch (const std::invalid_argument& e){  // Si se da un error presenta un texto de depuración notificandolo 
-                                MensajeInstruccion.setString("Error: Ingrese un numero entero");
+                            inputText = "";
+                            estado = INICIAL;
+                            mostrarMensajeInstruccion = false;
+                            MensajeInstruccion.setString("");
+                            } catch (const std::invalid_argument& e){
+                                MensajeInstruccion.setString("Error: Ingrese un número entero");
                                 inputText = "";
                             }
                             
@@ -342,8 +342,8 @@ int main() {
                                 mostrarMensajeInstruccion = false; // Se oculta el mensaje
                                 MensajeInstruccion.setString(""); // Se limpia el contenido del mensaje
 
-                                } catch (const std::invalid_argument& e){ // Si se da un error presenta un texto de depuración notificandolo
-                                    MensajeInstruccion.setString("Error: Ingrese un numero entero");
+                                } catch (const std::invalid_argument& e){
+                                    MensajeInstruccion.setString("Error: Ingrese un número entero");
                                     inputText = "";
                                 }
                                 
@@ -376,13 +376,13 @@ int main() {
                         estado = MOVER_GRUPO;
                         capturandoTexto = true;
                         mostrarMensajeInstruccion = true;
-                        MensajeInstruccion.setString("Ingrese el numero de grupo a mover");
-                    
-                    } else if (btnCambioPrioridad.isClicked(sf::Vector2f(mousePos))) { // Boton cambiar prioridad 
-                        estado = CAMBIAR_PRIORIDAD; // Se activa el estado de cambiar prioridad
-                        capturandoTexto = true; // Se activa la captura de texto
-                        mostrarMensajeInstruccion = true; // Se muestra el mensaje 
-                        MensajeInstruccion.setString("Ingrese el numero de grupo y la nueva prioridad separados por espacio");
+                        MensajeInstruccion.setString("Ingrese el número de grupo a mover");
+
+                    } else if (btnCambioPrioridad.isClicked(sf::Vector2f(mousePos))) {
+                        estado = CAMBIAR_PRIORIDAD;
+                        capturandoTexto = true;
+                        mostrarMensajeInstruccion = true;
+                        MensajeInstruccion.setString("Ingrese el número de grupo y la nueva prioridad separados por espacio");
                     }
 
                     for (int i = 0; i < CVIP.getLength(); i++) { 
@@ -451,19 +451,19 @@ int main() {
                 
                 }
                 
-            } else if (estado == ELIMINAR_GRUPO) { //Si el estado es eliminar grupo se activan los botones VIP y Regular
-                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) { // Click en el boton de VIP
-                    tipoGrupo = "VIP"; // Se selecciona el tipo de grupo
-                    estado = INGRESAR_GRUPO; // Se pasa al estado de ingresar grupo
-                    capturandoTexto = true; // Se activa la captura
-                    mostrarMensajeInstruccion = true; // Se activa el mensaje
-                    MensajeInstruccion.setString("Ingrese el numero de grupo a eliminar");
-                    } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) { // Click en el boton de Regular
-                    tipoGrupo = "Regular"; // Se selecciona el tipo de grupo
-                    estado = INGRESAR_GRUPO; // Se pasa al estado de ingresar grupo
-                    capturandoTexto = true;     // Se activa la captura
-                    mostrarMensajeInstruccion = true; // Se activa el mensaje
-                    MensajeInstruccion.setString("Ingrese el numero de grupo a eliminar");
+            } else if (estado == ELIMINAR_GRUPO) {
+                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
+                    tipoGrupo = "VIP";
+                    estado = INGRESAR_GRUPO;
+                    capturandoTexto = true;
+                    mostrarMensajeInstruccion = true;
+                    MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
+                    } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
+                    tipoGrupo = "Regular";
+                    estado = INGRESAR_GRUPO;
+                    capturandoTexto = true;
+                    mostrarMensajeInstruccion = true;
+                    MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
                 
                 }
             
