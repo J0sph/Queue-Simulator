@@ -260,61 +260,61 @@ int main() {
         }
     }
 
-    sf::RenderWindow window(sf::VideoMode({900, 700}), "Cola en el parque de Diversiones");
-    sf::Clock relog;
-    sf::Font font;
-    if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
+    sf::RenderWindow window(sf::VideoMode({900, 700}), "Cola en el parque de Diversiones"); //Se crea la ventana principal
+    sf::Clock relog; //Reloj para controlar cada cuanto avanzan los grupos y para estimar el tiempo de atención
+    sf::Font font; //Se carga la fuente
+    if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) { //Condional por si hay un error al cargar la fuente
         return -1;
     }
 
-    Boton btnAgregar(100, 500, "Agregar", font);
+    Boton btnAgregar(100, 500, "Agregar", font); //Se agregan los botones agregar, eliminar y mover a la ventana principal
     Boton btnEliminar(350, 500, "Eliminar", font);
     Boton btnMover(600, 500, "Mover", font);
 
-    Boton btnVIP(200, 600, "VIP", font);
+    Boton btnVIP(200, 600, "VIP", font); //Se agregan los botones VIP y Regular los cuales aparecerán al seleccionar el botón agregar o elimiar
     Boton btnRegular(500, 600, "Regular", font);
 
-    sf::Text textoIngresado;
-    textoIngresado.setFont(font);
+    sf::Text textoIngresado; //Texto para que el usuario visualice lo que está dijitando
+    textoIngresado.setFont(font); //Se le asignan las características al texto
     textoIngresado.setCharacterSize(24);
     textoIngresado.setPosition({300, 400});
     textoIngresado.setFillColor(sf::Color::White);
 
-    sf::Text MensajeInstruccion;
-    MensajeInstruccion.setFont(font);
+    sf::Text MensajeInstruccion; //Mensaje que le indica al usuario lo que debe hacer
+    MensajeInstruccion.setFont(font); //Se le asignan las características al texto
     MensajeInstruccion.setCharacterSize(24);
     MensajeInstruccion.setPosition({300, 350});
     MensajeInstruccion.setFillColor(sf::Color::White);
     MensajeInstruccion.setString("Ingrese los nombres separados por espacio y presione enter cuando finalice, posteriormente ingrese la prioridad del grupo");
 
     bool capturandoTexto = false;  // Controla si el usuario está escribiendo
-    bool mostrarMensajeInstruccion = false;
-    string inputText = "";
+    bool mostrarMensajeInstruccion = false; //Una vez el usuario no está ingresando texto a traves de la interfaz se deja de monstrar el mensaje de instrucción
+    string inputText = ""; //String que contiene el texto que va dijitando el usuario
 
-    sf::Time actual;
+    sf::Time actual; 
     while (window.isOpen()) {
-        actual = relog.getElapsedTime();
-        sf::Event event;
+        actual = relog.getElapsedTime(); //Se obtiene el tiempo actual 
+        sf::Event event; //Se crea el evento principal
 
-        while (window.pollEvent(event)) {
-            if (event.type==sf::Event::Closed){
+        while (window.pollEvent(event)) { //Bucle principal
+            if (event.type==sf::Event::Closed){ //Condicional para cerrar la ventana al precionar la X
                 window.close();
             }
-            if (event.type == sf::Event::TextEntered && capturandoTexto) {
-                char letra = static_cast<char>(event.text.unicode);
+            if (event.type == sf::Event::TextEntered && capturandoTexto) { //Condicional para cuando el usuario esté dijitando texto a través de la interfaz
+                char letra = static_cast<char>(event.text.unicode); //
                 if (letra == '\b' && !inputText.empty()) {
                        inputText.pop_back(); 
                     
                             
-                    } else if (letra == '\r') {  // Enter
-                        if (estado == INGRESAR_NOMBRE) {              
+                    } else if (letra == '\r') {  // Condicional para cuando el usuario dijite enter
+                        if (estado == INGRESAR_NOMBRE) {  //Si se seleccionó agregar se ingresaran los nombres de los integrantes del grupo           
                             istringstream stream(inputText);
                             string nombre;
                             while(stream >> nombre){
                                 names.push_back(nombre);
                             }
-                            capturandoTexto = false;
-                            inputText = "";
+                            capturandoTexto = false; //Se desactiva el estado de capturandoTexto cuando el usuario haya dijitado enter 
+                            inputText = ""; //Se vacía el texto en inputText para futuras acciones
 
                             if (tipoGrupo == "VIP"){
                             estado = INGRESAR_PRIORIDAD;
