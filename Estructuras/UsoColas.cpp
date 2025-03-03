@@ -108,34 +108,34 @@ int CalcularTiempoEspera(int posicion){
     int TiempoPorGrupo = 5;
     return posicion * TiempoPorGrupo;
 }
-
+//Función para visualizar desde la interfaz la información de cada grupo
 void DetallesGrupos(int groupID, bool isVIP, sf::RenderWindow& window, sf:: Font& font){
     Queue& cola = isVIP ? CVIP : CRegular;
     LinkedList* grupo = cola.getGroup(groupID);
 
-    if (grupo != nullptr) {
-    vector<string> members = grupo->getMembers();
-    int TiempoEstimado = CalcularTiempoEspera(groupID);
+    if (grupo != nullptr) { 
+    vector<string> members = grupo->getMembers(); //Se obtionen los miembros del grupo seleccionado 
+    int TiempoEstimado = CalcularTiempoEspera(groupID); //Se llama la función que calcula el tiempo de espera
     
-    sf::Text DetallesGrupo;
-    DetallesGrupo.setFont(font);
+    sf::Text DetallesGrupo; //Se crea el texto que se verá en la interfaz con la información
+    DetallesGrupo.setFont(font); //Se le asignan las caracteristicas al texto
     DetallesGrupo.setCharacterSize(21);
     DetallesGrupo.setFillColor(sf::Color::White);
     DetallesGrupo.setPosition(300, 150);
 
-    string texto = "Grupo: " + to_string(groupID) + "\n";
+    string texto = "Grupo: " + to_string(groupID) + "\n"; //String con la información
     texto += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
     texto += "Integrantes: \n";
-    for (const string& member : members) {
+    for (const string& member : members) { //Se agregan los miembros
         texto += member + "\n";
     }
     DetallesGrupo.setString(texto);
 
-    window.clear();
-    window.draw(DetallesGrupo);
-    window.display();
+    window.clear(); //Se limpia la pantalla
+    window.draw(DetallesGrupo); //Se dibuja el texto 
+    window.display(); //Se muestra en pantalla
 
-    sf::Event event;
+    sf::Event event; //Se crea el evento para mostrar la infomación
     while (window.waitEvent(event)) {
         if (event.type == sf::Event::KeyPressed) {
             break;
@@ -145,24 +145,24 @@ void DetallesGrupos(int groupID, bool isVIP, sf::RenderWindow& window, sf:: Font
     }
 }
 
-
+//Función para dibujar los rectángulos(Grupos)
 void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color, Movimiento &mov) {
-    if (queue.isEmpty()) return;
+    if (queue.isEmpty()) return; //Comprueba si las colas están vacías
     
-    LinkedList* temp = queue.PrimerElemento();
-    float x = 250 - mov.offset; // Aplicar desplazamiento inicial
+    LinkedList* temp = queue.PrimerElemento(); //Seleccionada el primer elemento de la lista enlazada (Primer grupo)
+    float x = 250 - mov.offset; // Se aplica el desplazamiento con mov.offset cuando enMovimiento sea activado pasado un tiempo seleccionado
 
-    sf::Font font;
+    sf::Font font; //Se carga la fuente a utilizar 
         if (!font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
             cout << "No cargó la fuente correctamente" << endl;
             return;
         }
 
-    while (temp != nullptr) {
-        sf::RectangleShape Elemento(sf::Vector2f(AnchoElemento, LargoElemento));
+    while (temp != nullptr) { //Se recorren los nodos de la lista enlazada para dibujar cada grupo
+        sf::RectangleShape Elemento(sf::Vector2f(AnchoElemento, LargoElemento)); //Se asignan las caracteristicas de los rectangulos
         Elemento.setPosition(sf::Vector2f(x, y));
         Elemento.setFillColor(color);
-        
+        //Se asignan las características del texto correspondiente al número de grupo de cada rectángulo
         sf::Text numero;
         numero.setFont(font);
         string NG = to_string(temp->groupID);
@@ -171,7 +171,7 @@ void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color,
         numero.setFillColor(sf::Color::White);
         numero.setPosition(sf::Vector2f(x+80, y+10));
 
-
+        //Se asignan las características del texto correspondiente a "Grupo: " Mostrado en cada rectángulo
         sf::Text Grupo;
         Grupo.setFont(font);    
         string G = "Grupo: ";
@@ -180,21 +180,21 @@ void Elementos(sf::RenderWindow &window, Queue &queue, float y, sf::Color color,
         Grupo.setFillColor(sf::Color::White);
         Grupo.setPosition(sf::Vector2f(x+10, y+10));
 
-        window.draw(Elemento);
-        window.draw(numero);
-        window.draw(Grupo);
+        window.draw(Elemento); //Se dinuja el rectángulo
+        window.draw(numero); //Se dibuja el níumero
+        window.draw(Grupo); //Se dibula la string
 
         x += AnchoElemento + DistanciaEntreElementos;
         temp = temp->next;
     }
 
-    // Movimiento progresivo
+    // Se realiza la animación del movimiento progresivo de los grupos
     if (mov.enMovimiento) {
-        mov.offset += velocidadMovimiento;
-        if (mov.offset >= AnchoElemento + DistanciaEntreElementos) {
-            mov.enMovimiento = false;
-            mov.offset = 0; // Reiniciar desplazamiento para los demás elementos
-            queue.dequeue(); // Ahora eliminamos el primer elemento después de la animación
+        mov.offset += velocidadMovimiento; //Cada frame mov.offset aumenta
+        if (mov.offset >= AnchoElemento + DistanciaEntreElementos) { //Al llegar a una cierta distancia se elimina el grupo simulando que entró al parque o a una atracción
+            mov.enMovimiento = false; //Se desactiva el movimiento para el siguiente grupo, se activa hasta pasado un tiempo
+            mov.offset = 0; // Se reinicia el desplazamiento para los demás elementos
+            queue.dequeue(); // Ahora eliminamos el primer elemento después de acabada la animación
         }
     }
 }
@@ -212,14 +212,14 @@ void upgradeToVip(int groupID, int prioridad){
 
 int main() {
     int option;  // Para elegir las opciones del menú
-    int salir = 0;
+    int salir = 0; //Variable para salir del menú
     
-    vector<string> names;
-    int groupID;
-    int priority;
-    int SVIP;
+    vector<string> names; //Vector que contendrá los nombres de los integrantes del grupo
+    int groupID; //Variable para saber el número de grupo
+    int priority; //Variable para la prioridad de la cola VIP
+    int SVIP; //Variable para indicar por consola si el grupo es VIP o no
 
-    Estado estado = INICIAL;
+    Estado estado = INICIAL; //Estado inicial
     string tipoGrupo = "";  // VIP o Regular    
     int numeroGrupo = -1;
 
