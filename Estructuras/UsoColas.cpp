@@ -340,115 +340,116 @@ int main() {
                             }
                             names.clear(); //Se limpia el vector names
                             capturandoTexto = false; //Se vuelve al estado inicial para esperar la nueva acción del usuario
-                            inputText = "";
-                            estado = INICIAL;
-                            mostrarMensajeInstruccion = false;
-                            MensajeInstruccion.setString("");
-                            } catch (const std::invalid_argument& e){
+                            inputText = ""; // Se reinicia o limpia la entrada de texto
+                            estado = INICIAL; 
+                            mostrarMensajeInstruccion = false; // Se oculta el mensaje
+                            MensajeInstruccion.setString(""); // Se limpia el conenido del mensaje
+                            } catch (const std::invalid_argument& e){  // Si se da un error presenta un texto de depuración notificandolo 
                                 MensajeInstruccion.setString("Error: Ingrese un número entero");
                                 inputText = "";
                             }
                             
                         } else if (estado == INGRESAR_GRUPO){
-                            numeroGrupo = std::stoi(inputText);
+                            numeroGrupo = std::stoi(inputText); // Convierte lo ingresado a un entero
 
                             if (tipoGrupo == "VIP"){
-                                CVIP.deleteGroup(numeroGrupo);
+                                CVIP.deleteGroup(numeroGrupo); // Elimina un VIP identificado por el número de grupo
                             } else {
-                                CRegular.deleteGroup(numeroGrupo);
+                                CRegular.deleteGroup(numeroGrupo); // Elimina un grupo regular identificado por el número de grupo
                             }
-                            capturandoTexto = false;
-                            inputText = "";
+                            capturandoTexto = false; // Se detiene la captura de texto
+                            inputText = ""; // Se limpia el texto ingresado
                             estado = INICIAL;
-                            mostrarMensajeInstruccion = false;
-                            MensajeInstruccion.setString("");
+                            mostrarMensajeInstruccion = false; // Se oculta el mensaje
+                            MensajeInstruccion.setString(""); // Se limpia el contenido del mensaje
                         } else if(estado == MOVER_GRUPO) {
 
-                           int numeroGrupo = std::stoi(inputText);
-                            vector<string> integrantes = CRegular.deleteGroup(numeroGrupo);
+                           int numeroGrupo = std::stoi(inputText); // Convierte la entrada a un entero 
+                            vector<string> integrantes = CRegular.deleteGroup(numeroGrupo); // Elimina el grupo pero guarda a los integrantes
                             if (!integrantes.empty()) {
-                                int prioridad = 1;
+                                int prioridad = 1; // Se asigna la prioridad 1
 
-                                CVIP.enqueue(integrantes, prioridad);
+                                CVIP.enqueue(integrantes, prioridad); // Mueve el grupo a la cola VIP con la prioridad dada
 
                             }
                             
-                            capturandoTexto = false;
-                            inputText="";
+                            capturandoTexto = false; // Se detiene la captura de texto
+                            inputText=""; // Se limpia el texto ingresado
                             estado = INICIAL;  
-                            mostrarMensajeInstruccion = false;
-                            MensajeInstruccion.setString("");
+                            mostrarMensajeInstruccion = false; // Se oculta el mensaje
+                            MensajeInstruccion.setString(""); // Se limpia el contenido del mensaje
                         }
                     
                         } else {
-                        inputText += letra;
+                        inputText += letra; // Se agrega lo imgresado al texto actual
                         }
 
-                    textoIngresado.setString("Ingresando: " + inputText);
+                    textoIngresado.setString("Ingresando: " + inputText); // Le refleja al usuario la entrada actual
                 }
             
 
             if (event.type == sf::Event::MouseButtonPressed) {
-                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window); // Es para saber la posición del mouse
 
-                if (estado == INICIAL) {
-                    if (btnAgregar.isClicked(sf::Vector2f(mousePos))) {
+                if (estado == INICIAL) { //Si el estado es inicial se activan los botones agregar, eliminar y mover
+                    if (btnAgregar.isClicked(sf::Vector2f(mousePos))) { // Boton agregar que pasa al estado de seleccionar tipo, con mensaje y captura de texto apagada
                         estado = SELECCIONAR_TIPO;
                         capturandoTexto = false;
                         mostrarMensajeInstruccion = false;
                     
-                    } else if (btnEliminar.isClicked(sf::Vector2f(mousePos))) {
+                    } else if (btnEliminar.isClicked(sf::Vector2f(mousePos))) { // Boton eliminar que pasa al estado de eliminar grupo, con mensaje y captura de texto apagada
                         estado = ELIMINAR_GRUPO;
                         capturandoTexto = false;
                         mostrarMensajeInstruccion = false;
                     
-                    } else if (btnMover.isClicked(sf::Vector2f(mousePos))) {
+                    } else if (btnMover.isClicked(sf::Vector2f(mousePos))) { // Boton mover que pasa al estado de mover grupo, con mensaje y captura de texto encendidos
                         estado = MOVER_GRUPO;
                         capturandoTexto = true;
                         mostrarMensajeInstruccion = true;
                         MensajeInstruccion.setString("Ingrese el número de grupo a mover");
                     }
 
-                    for (int i = 0; i < CVIP.getLength(); i++) {
-                        float xPosition = 250 + i * (AnchoElemento + DistanciaEntreElementos) - movVIP.offset;
-                        sf::FloatRect cuadroVIP(xPosition, 100, AnchoElemento, LargoElemento);
-                        if (cuadroVIP.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                           LinkedList* grupo = CVIP.getGroup(i);
+                    for (int i = 0; i < CVIP.getLength(); i++) { 
+                        float xPosition = 250 + i * (AnchoElemento + DistanciaEntreElementos) - movVIP.offset; //Se calcula la posición de cada grupo en la cola VIP
+                        sf::FloatRect cuadroVIP(xPosition, 100, AnchoElemento, LargoElemento); //Se crea un rectángulo con las dimensiones de cada grupo
+                        if (cuadroVIP.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) { //Se comprueba si el mouse está dentro del rectángulo
+                            
+                           LinkedList* grupo = CVIP.getGroup(i); //Se obtiene el grupo seleccionado
                             if (grupo != nullptr) {
-                            vector<string> members = grupo->getMembers();
-                            int TiempoEstimado = (i+1) * 5;
+                            vector<string> members = grupo->getMembers(); //Se obtienen los miembros del grupo
+                            int TiempoEstimado = (i+1) * 5; //Se calcula el tiempo de espera en base a la posición del grupo en la cola
 
-                            string detalle = "Grupo: " + to_string(i + 1) + "\n";
+                            string detalle = "Grupo: " + to_string(i + 1) + "\n"; //Se crea un string con la información del grupo
                             detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
                             detalle += "Integrantes: \n";
-                            for (const auto& member : members) {
+                            for (const auto& member : members) { //Se agregan los miembros 
                                 detalle +="-" + member + "\n";                                                       
                             }
-                            MensajeInstruccion.setString(detalle);
-                            mostrarMensajeInstruccion = true;
+                            MensajeInstruccion.setString(detalle); // Muestra el mensaje con la información del grupo
+                            mostrarMensajeInstruccion = true; // Se activa el mensaje
                             }
                             break;
                         }
                     }
 
-                    for (int i = 0; i < CRegular.getLength(); i++) {
-                        float xPosition = 250 + i * (AnchoElemento + DistanciaEntreElementos) - movRegular.offset;
-                        sf::FloatRect cuadroRegular(xPosition, 200, AnchoElemento, LargoElemento);
+                    for (int i = 0; i < CRegular.getLength(); i++) { //Iterando sobre cada grupo de la cola regular
+                        float xPosition = 250 + i * (AnchoElemento + DistanciaEntreElementos) - movRegular.offset; // Calculando la posicion 
+                        sf::FloatRect cuadroRegular(xPosition, 200, AnchoElemento, LargoElemento); // Creando un rectangulo para hacerle click en la interfaz
 
-                        if (cuadroRegular.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                            LinkedList* grupo = CRegular.getGroup(i);
+                        if (cuadroRegular.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) { // Se verifica la posicion del mouse 
+                            LinkedList* grupo = CRegular.getGroup(i); // Obtiene un grupo en una posicion determinada
                             if (grupo != nullptr) {
-                            vector<string> members = grupo->getMembers();
-                            int TiempoEstimado = (i+1)*5;
+                            vector<string> members = grupo->getMembers(); // Obtiene una lista de los integrantes del grupo
+                            int TiempoEstimado = (i+1)*5; // Calcula el tiempo de espera segun la posicion 
 
-                            string detalle = "Grupo: " + to_string(i + 1) + "\n";
+                            string detalle = "Grupo: " + to_string(i + 1) + "\n";//Se crea un string con la información del grupo
                             detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
                             detalle += "Integrantes: \n";
                             for (const auto& member : members) {
-                                detalle +="-" + member + "\n";                                                       
+                                detalle +="-" + member + "\n";    // Se itera sobre cada miemmbro añadiendo el nombre                                                    
                             }
-                            MensajeInstruccion.setString(detalle);
-                            mostrarMensajeInstruccion = true;
+                            MensajeInstruccion.setString(detalle); // Muestra el mensaje con la información del grupo
+                            mostrarMensajeInstruccion = true; // Se activa el mensaje
                             }
 
                             break;
@@ -456,41 +457,41 @@ int main() {
                     }
 
                     
-                } else if (estado == SELECCIONAR_TIPO) {
-                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
-                    tipoGrupo = "VIP";
-                    estado = INGRESAR_NOMBRE;
-                    capturandoTexto = true;
-                    mostrarMensajeInstruccion = true;
+                } else if (estado == SELECCIONAR_TIPO) { //Si el estado es seleccionar tipo se activan los botones VIP y Regular
+                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) { // Click en el botn de VIP
+                    tipoGrupo = "VIP"; // Se selecciona el tipo de grupo
+                    estado = INGRESAR_NOMBRE; // Se pasa al estado de ingresar nombre
+                    capturandoTexto = true; // Se activa la captura
+                    mostrarMensajeInstruccion = true; // Se activa el mensaje
                     MensajeInstruccion.setString("Ingrese los nombres separados por espacio y presione enter cuando finalice");
                    
-                } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
-                    tipoGrupo = "Regular";
-                    estado = INGRESAR_NOMBRE;
-                    capturandoTexto = true;
-                    mostrarMensajeInstruccion = true;
+                } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) { // Click en el boton de Regular
+                    tipoGrupo = "Regular"; // Se selecciona el tipo de grupo
+                    estado = INGRESAR_NOMBRE; // Se pasa al estado de ingresar nombre
+                    capturandoTexto = true; // Se activa la captura
+                    mostrarMensajeInstruccion = true; // Se activa el mensaje
                     MensajeInstruccion.setString("Ingrese los nombres separados por espacio y presione enter cuando finalice");
                 
                 }
                 
-            } else if (estado == ELIMINAR_GRUPO) {
-                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) {
-                    tipoGrupo = "VIP";
-                    estado = INGRESAR_GRUPO;
-                    capturandoTexto = true;
-                    mostrarMensajeInstruccion = true;
+            } else if (estado == ELIMINAR_GRUPO) { //Si el estado es eliminar grupo se activan los botones VIP y Regular
+                    if (btnVIP.isClicked(sf::Vector2f(mousePos))) { // Click en el boton de VIP
+                    tipoGrupo = "VIP"; // Se selecciona el tipo de grupo
+                    estado = INGRESAR_GRUPO; // Se pasa al estado de ingresar grupo
+                    capturandoTexto = true; // Se activa la captura
+                    mostrarMensajeInstruccion = true; // Se activa el mensaje
                     MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
-                    } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) {
-                    tipoGrupo = "Regular";
-                    estado = INGRESAR_GRUPO;
-                    capturandoTexto = true;
-                    mostrarMensajeInstruccion = true;
+                    } else if (btnRegular.isClicked(sf::Vector2f(mousePos))) { // Click en el boton de Regular
+                    tipoGrupo = "Regular"; // Se selecciona el tipo de grupo
+                    estado = INGRESAR_GRUPO; // Se pasa al estado de ingresar grupo
+                    capturandoTexto = true;     // Se activa la captura
+                    mostrarMensajeInstruccion = true; // Se activa el mensaje
                     MensajeInstruccion.setString("Ingrese el número de grupo a eliminar");
                 
                 }
             
-            }else if (estado == MOVER_GRUPO) {
-                    if(!capturandoTexto){
+            }else if (estado == MOVER_GRUPO) { //Si el estado es mover grupo
+                    if(!capturandoTexto){ //Si no se está capturando texto se activa la captura de texto y se muestra el mensaje 
                         capturandoTexto = true;
                         mostrarMensajeInstruccion = true;
                         MensajeInstruccion.setString("Ingrese el número de grupo a mover");
