@@ -70,6 +70,11 @@ class LinkedList {
             }
         }
 
+        //Método para obtener el GroupID
+        int getGroupID(){
+            return groupID;
+        }
+
 };
 
 #endif // LINKEDLIST_H

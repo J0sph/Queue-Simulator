@@ -13,11 +13,17 @@ using namespace std;
 class VIPQueue : public Queue{
     public:
         // Sobrecarga del método enqueue para añadir un nuevo parámetro:
-        void enqueue(const vector<string>& members, int priority, bool agregarFinal = false) { // Recibe un vector con los nombres y la prioridad
+        void enqueue(const vector<string>& members, int priority, bool agregarFinal = false, int groupID = 0) { // Recibe un vector con los nombres y la prioridad
+            int ID;
             if (members.empty()) return; // Si no se incluye ningun nombre, sale de la función
             // Crea la lista enlazada en el Heap y se le asigna un identificador de grupo.
-            LinkedList* newGroup = new LinkedList(nextGroupID); 
-            nextGroupID++; // Aumenta el siguiente identificador de grupos para que no se repita
+            if (groupID == 0){
+                ID = nextGroupID;
+                nextGroupID++; // Aumenta el siguiente identificador de grupos para que no se repita
+            } else {
+                ID = groupID;
+            }
+            LinkedList* newGroup = new LinkedList(ID); 
             newGroup->priority = priority; // Le asigna prioridad al grupo.
             for (const string& member : members) { // Añade todos los miembros a la lista enlazada
                 newGroup->append(member);  
@@ -51,7 +57,7 @@ class VIPQueue : public Queue{
         void updatePriority(int groupID, int newPriority){
             vector<string> members;
             members = deleteGroup(groupID);
-            enqueue(members, newPriority);
+            enqueue(members, newPriority, false, groupID);
 
         }
 
