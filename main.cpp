@@ -395,7 +395,7 @@ int main() {
                             vector<string> members = grupo->getMembers(); //Se obtienen los miembros del grupo
                             int TiempoEstimado = (i+1) * 5; //Se calcula el tiempo de espera en base a la posición del grupo en la cola
 
-                            string detalle = "Grupo: " + to_string(i + 1) + "\n"; //Se crea un string con la información del grupo
+                            string detalle = "Grupo: " + to_string(grupo->getGroupID()) + "\n"; //Se crea un string con la información del grupo
                             detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
                             detalle += "Integrantes: \n";
                             for (const auto& member : members) { //Se agregan los miembros 
@@ -419,7 +419,7 @@ int main() {
                             vector<string> members = grupo->getMembers(); // Obtiene una lista de los integrantes del grupo
                             int TiempoEstimado = (i+1)*5; // Calcula el tiempo de espera segun la posicion 
 
-                            string detalle = "Grupo: " + to_string(i + 1) + "\n";//Se crea un string con la información del grupo
+                            string detalle = "Grupo: " + to_string(grupo->getGroupID()) + "\n";//Se crea un string con la información del grupo
                             detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
                             detalle += "Integrantes: \n";
                             for (const auto& member : members) {
