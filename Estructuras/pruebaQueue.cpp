@@ -15,11 +15,11 @@ void IngresarNombres(vector<string>& names) {
     // Leer toda la línea de entrada
     getline(cin, input);
 
-    // Usamos el stringstream para dividir la línea en palabras
+    // Se usa stringstream para dividir la línea en palabras:
     ss.clear();  // Limpiar cualquier contenido previo del stringstream
     ss.str(input);  // Asignar el nuevo input al stringstream
 
-    // Extraer cada palabra (nombre) del stringstream y agregarla al vector
+    // Extraer cada nombre del stringstream y agregarla al vector:
     while (ss >> name) {
         names.push_back(name);
     }
@@ -30,15 +30,13 @@ void IngresarNombres(vector<string>& names) {
 
 int main() {
     Queue cola;
-    int option;  // Para elegir las opciones del menú
+    int option;  // Para elegir las opciones del menú.
 
     vector<string> names;
     int groupID;
- 
- // Declaramos el stringstream fuera del switch
 
     while (true) {
-        // Mostrar el menú de opciones
+        // Mostrar el menú de opciones:
         cout << "\n=== Menú ===\n";
         cout << "1. Agregar grupo\n";
         cout << "2. Unir a un grupo\n";
@@ -72,7 +70,7 @@ int main() {
                 cola.showQueue();
                 break;
 
-            case 4:  // Opción para elimianr grupo
+            case 4:  // Opción para eliminar grupo
                 cout << "Ingrese el número de grupo (presione Enter para terminar): ";
                 cin >> groupID;
                 cola.deleteGroup(groupID);

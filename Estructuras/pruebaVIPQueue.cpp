@@ -15,11 +15,11 @@ void IngresarNombres(vector<string>& names) {
     // Leer toda la línea de entrada
     getline(cin, input);
 
-    // Usamos el stringstream para dividir la línea en palabras
+    // Se usa stringstream para dividir la línea en palabras
     ss.clear();  // Limpiar cualquier contenido previo del stringstream
     ss.str(input);  // Asignar el nuevo input al stringstream
 
-    // Extraer cada palabra (nombre) del stringstream y agregarla al vector
+    // Extraer cada nombre del stringstream y agregarla al vector
     while (ss >> name) {
         names.push_back(name);
     }
@@ -36,7 +36,6 @@ int main() {
     int groupID;
     int priority;
  
- // Declaramos el stringstream fuera del switch
 
     while (true) {
         // Mostrar el menú de opciones
