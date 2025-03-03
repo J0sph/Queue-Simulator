@@ -10,58 +10,59 @@
 
 
 using namespace std;
-// Estructura básica para un botón
+// Estructura para realizar los botones
 struct Boton {
-    sf::RectangleShape shape;
-    sf::Text text;
+    sf::RectangleShape shape; //Se hace la forma rectangular de los botones utilizando la biblioteca SFML
+    sf::Text text; //Se hace el texto que tendrán los botones utilizando la biblioteca SFML
 
-    Boton(float x, float y, const std::string &texto, sf::Font &font) : text(texto, font) {
-        shape.setSize({200, 50});
-        shape.setPosition({x, y});
-        shape.setFillColor(sf::Color::Blue);
+    Boton(float x, float y, const std::string &texto, sf::Font &font) : text(texto, font) { //Constructor de la estructura Botón
+        shape.setSize({200, 50}); //Se asignan las dimensiones de los botones
+        shape.setPosition({x, y}); //Se asigna la posición de cada botón
+        shape.setFillColor(sf::Color::Blue); //Se asigna el color del botón
 
-        text.setFont(font);
-        text.setString(texto);
-        text.setCharacterSize(20);
-        text.setFillColor(sf::Color::White);
-        text.setPosition({x + 60, y + 10});
+        text.setFont(font); //Se le asigna la fuente al texto de los botones
+        text.setString(texto); //Texto que se va a mostrar
+        text.setCharacterSize(20);  //Tamaño del texto
+        text.setFillColor(sf::Color::White); //Color del texto
+        text.setPosition({x + 60, y + 10}); //Se asigna la posición que tendrá el texto dentro del botón
     }
 
-    void draw(sf::RenderWindow &window) {
+    void draw(sf::RenderWindow &window) { //Función para dibujar la forma y texto de los botones en la interfaz 
         window.draw(shape);
         window.draw(text);
     }
 
-    bool isClicked(sf::Vector2f mousePos) {
+    bool isClicked(sf::Vector2f mousePos) { //Función que indica si el botón fue presionado
         return shape.getGlobalBounds().contains(mousePos);
     }
 };
 
-enum Estado {
-    INICIAL,
-    SELECCIONAR_TIPO,  // Mostrar VIP/Regular
-    INGRESAR_NOMBRE,   // Introducir texto
-    ELIMINAR_GRUPO,
-    INGRESAR_GRUPO,
-    INGRESAR_PRIORIDAD,
-    MOVER_GRUPO
+enum Estado { //Estados para controlar el flujo de ejecución
+    INICIAL, //Para volver al inicio cuando no se ha seleccionado ningún botón
+    SELECCIONAR_TIPO,  //Se seleccionó el botón agregar
+    INGRESAR_NOMBRE,   //Introduciendo el nombre de los miembros del grupo
+    ELIMINAR_GRUPO, //Se seleccionó el botón eliminar
+    INGRESAR_GRUPO, //Se seleccionó el botón eliminar y se pidió al usuario que dijite el grupo al que se le desea realizar la acción
+    INGRESAR_PRIORIDAD, //Se seleccionó agregar Vip y se le pide al usuario que dijite la prioridad
+    MOVER_GRUPO //Se seleccionó el botón mover
 };
 
-VIPQueue CVIP;
-Queue CRegular;
-
+VIPQueue CVIP; //Se crea la cola VIP
+Queue CRegular; //Se crea la cola Regular
+//Dimensiones y distancia entre grupos de las colas representados como rectangulos de colores
 int AnchoElemento = 100;
 int LargoElemento = 50;
 int DistanciaEntreElementos = 20;
-
+//Estructura para realizar la animación de que los grupos se desplazan
 struct Movimiento {
-    bool enMovimiento = false;
+    bool enMovimiento = false; //Estado que indica si el grupo se está desplazando
     float offset = 0;
 };
 
 Movimiento movVIP, movRegular;
-float velocidadMovimiento = 0.1f; // Pixeles por frame
+float velocidadMovimiento = 0.1f; // Velocidad en pixeles por frame de los grupos
 
+//Función para ingresar los nombres de los integrantes del grupo
 void IngresarNombres(vector<string>& names) {
 
     string input;
@@ -82,18 +83,16 @@ void IngresarNombres(vector<string>& names) {
     }
 }
 
-
+//Función para agregar los grupos a la cola VIP o regular en base a un parámetro
 void AgregarElementoACola(bool VIP, const vector<string>& miembros, int Prioridad){
-    if (VIP == true)
-    {
+    if (VIP == true){
         CVIP.enqueue(miembros, Prioridad);
-    }
-    else
-    {
+    }else{
         CRegular.enqueue(miembros);
     }
 }
 
+//Función para que la cola regular se comience a desplazar hasta que la cola VIP esté vacía
 void ColaPorPrioridad() {
     if (!CVIP.isEmpty() && !movVIP.enMovimiento) {
         movVIP.enMovimiento = true;
@@ -104,6 +103,7 @@ void ColaPorPrioridad() {
     }
 }
 
+//Función para calcular el tiempo de espera en base a la posición del grupo en la cola y el tiempo que tarda cada grupo en avanzar
 int CalcularTiempoEspera(int posicion){
     int TiempoPorGrupo = 5;
     return posicion * TiempoPorGrupo;
