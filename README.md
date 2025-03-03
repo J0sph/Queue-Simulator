@@ -6,7 +6,7 @@
 
 - Joseph Álvarez Sandí C20440
 - Joseph Castillo Torres C11795
-- Luis 
+- Luis Fernando Rojas Morua B86941
 - Alejandro García Rucavado C03187
 
 
