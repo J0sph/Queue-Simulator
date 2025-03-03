@@ -92,6 +92,9 @@ class Queue {
                 
                 vector<string> members = temp->getMembers(); 
                 delete temp; //Elimina el grupo de la fila
+                if(length==0){
+                    nextGroupID = 1;
+                }
                 return members; // Se elimina el grupo.
 
             } else{ // Si no, se recorre la lista hasta encontrar el valor.
@@ -107,6 +110,9 @@ class Queue {
                         
                         vector<string> members = delGroup->getMembers(); 
                         delete delGroup; //Elimina el grupo de la fila
+                        if(length==0){
+                            nextGroupID = 1;
+                        }
                         return members; // Se elimina el grupo.
                       
                     }
