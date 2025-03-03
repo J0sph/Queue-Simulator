@@ -316,30 +316,30 @@ int main() {
                             capturandoTexto = false; //Se desactiva el estado de capturandoTexto cuando el usuario haya dijitado enter 
                             inputText = ""; //Se vacía el texto en inputText para futuras acciones
 
-                            if (tipoGrupo == "VIP"){
-                            estado = INGRESAR_PRIORIDAD;
-                            capturandoTexto = true;
-                            mostrarMensajeInstruccion = true;
-                            MensajeInstruccion.setString("Ingrese la prioridad del grupo");
-                            } else {
+                            if (tipoGrupo == "VIP"){ //Condicional por si el grupo que se va a agregar es VIP para preguntarle al usuario por la prioridad
+                            estado = INGRESAR_PRIORIDAD; //Se activa el estado Ingresar prioridad 
+                            capturandoTexto = true; //Se activa capturando texto
+                            mostrarMensajeInstruccion = true; //Se muestra el mensaje de instrucción al usuario
+                            MensajeInstruccion.setString("Ingrese la prioridad del grupo"); //Mensaje de instrucción
+                            } else { //Si el grupo a agregar no es VIP simplemente de agrega sin importar la prioridad
                                 AgregarElementoACola(false, names, 0);
-                                names.clear();
-                                capturandoTexto = false;
+                                names.clear(); //Se limpia el vector names
+                                capturandoTexto = false; //De nuevo se desactivan los estados para volver al estado inicial y esperar la nueva acción del usuario
                                 estado = INICIAL;
                                 mostrarMensajeInstruccion = false;
                                 MensajeInstruccion.setString("");
                             }
-                        } else if (estado == INGRESAR_PRIORIDAD) {
+                        } else if (estado == INGRESAR_PRIORIDAD) { //Si el grupo añadido es VIP se agrega tomando en cuenta su proridad la cual es dijitada por el usuario
 
                             try{
                             priority = stoi(inputText);
 
                             if(tipoGrupo == "VIP"){
-                                AgregarElementoACola(true, names, priority  );
+                                AgregarElementoACola(true, names, priority);
                                 
                             }
-                            names.clear();
-                            capturandoTexto = false;
+                            names.clear(); //Se limpia el vector names
+                            capturandoTexto = false; //Se vuelve al estado inicial para esperar la nueva acción del usuario
                             inputText = "";
                             estado = INICIAL;
                             mostrarMensajeInstruccion = false;
@@ -501,30 +501,30 @@ int main() {
     }
     
 
-    if (actual.asSeconds() > 15){
+    if (actual.asSeconds() > 15){ //Si pasó un cierto tiempo se activa la animación de movimiento y se elimina el primer grupo
         ColaPorPrioridad();
-        relog.restart();
+        relog.restart(); //Se reinicia el tiempo 
     }
 
-    window.clear();
-    Elementos(window, CVIP, 100, sf::Color::Red, movVIP);
-    Elementos(window, CRegular, 200, sf::Color::Blue, movRegular);
-    // Mostrar botones iniciales
+    window.clear(); //Se limplia la pantalla
+    Elementos(window, CVIP, 100, sf::Color::Red, movVIP); //Se dibuja la cola VIP
+    Elementos(window, CRegular, 200, sf::Color::Blue, movRegular); //Se dinuja la cola Regular
+    //Se bibujan los botones iniciales
     btnAgregar.draw(window);
     btnEliminar.draw(window);
     btnMover.draw(window);
 
-    // Mostrar botones VIP/Regular si está en ese estado
+    // Mostrar botones VIP/Regular si el usuario presionó los botones Agregar o Eliminar
     if (estado == SELECCIONAR_TIPO || estado == ELIMINAR_GRUPO) {
         btnVIP.draw(window);
         btnRegular.draw(window);
     }
-
+    //Se dibuja el texto de la instrucción que debe seguir el usuario al estar este ingresando texto a través de la interfaz
     if(mostrarMensajeInstruccion){
         window.draw(MensajeInstruccion);
     }
   
-    // Mostrar texto en edición
+    //Se dibuja el texto que va ingresando el usuario a través de la interfaz
     if (capturandoTexto) {
         window.draw(textoIngresado);
     }
