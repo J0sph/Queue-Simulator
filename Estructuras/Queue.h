@@ -118,11 +118,14 @@ class Queue {
 
         LinkedList* getGroup(int groupID){
             LinkedList* temp = first; 
+            int tempIndex = 0;
+
             while (temp) { 
-                if (temp->groupID == groupID){ 
+                if (tempIndex == groupID){ 
                     return temp; 
                 }
                 temp = temp->next; 
+                tempIndex++;
             }
             return nullptr;
         }

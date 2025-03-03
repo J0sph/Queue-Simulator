@@ -13,7 +13,7 @@ using namespace std;
 class VIPQueue : public Queue{
     public:
         // Sobrecarga del método enqueue para añadir un nuevo parámetro:
-        void enqueue(const vector<string>& members, int priority) { // Recibe un vector con los nombres y la prioridad
+        void enqueue(const vector<string>& members, int priority, bool agregarFinal = false) { // Recibe un vector con los nombres y la prioridad
             if (members.empty()) return; // Si no se incluye ningun nombre, sale de la función
             // Crea la lista enlazada en el Heap y se le asigna un identificador de grupo.
             LinkedList* newGroup = new LinkedList(nextGroupID); 
@@ -24,6 +24,9 @@ class VIPQueue : public Queue{
             }
             if (length == 0) {  // Si la cola está vacía, el nuevo grupo será el primero y el último
                 first = last = newGroup;
+            }else if(agregarFinal){
+                last->next = newGroup;
+                last = newGroup;
             } else {
                 if(priority < first->priority){ // Si tiene un número de prioridad más bajo es el primero de la cola.
                     newGroup->next = first;

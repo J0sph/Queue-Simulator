@@ -388,12 +388,13 @@ int main() {
                     }
 
                     for (int i = 0; i < CVIP.getLength(); i++) {
-                        sf::FloatRect cuadroVIP(250+i*(AnchoElemento+DistanciaEntreElementos), 100, AnchoElemento, LargoElemento);
-                        if (cuadroVIP.contains(mousePos.x, mousePos.y)) {
-                            LinkedList* grupo = CVIP.getGroup(i + 1);
+                        float xPosition = 250 + i * (AnchoElemento + DistanciaEntreElementos) - movVIP.offset;
+                        sf::FloatRect cuadroVIP(xPosition, 100, AnchoElemento, LargoElemento);
+                        if (cuadroVIP.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                           LinkedList* grupo = CVIP.getGroup(i);
                             if (grupo != nullptr) {
                             vector<string> members = grupo->getMembers();
-                            int TiempoEstimado = i*5;
+                            int TiempoEstimado = (i+1) * 5;
 
                             string detalle = "Grupo: " + to_string(i + 1) + "\n";
                             detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
@@ -409,12 +410,14 @@ int main() {
                     }
 
                     for (int i = 0; i < CRegular.getLength(); i++) {
-                        sf::FloatRect cuadroRegular(250+i*(AnchoElemento+DistanciaEntreElementos), 200, AnchoElemento, LargoElemento);
-                        if (cuadroRegular.contains(mousePos.x, mousePos.y)) {
-                            LinkedList* grupo = CRegular.getGroup(i + 1);
+                        float xPosition = 250 + i * (AnchoElemento + DistanciaEntreElementos) - movRegular.offset;
+                        sf::FloatRect cuadroRegular(xPosition, 200, AnchoElemento, LargoElemento);
+
+                        if (cuadroRegular.contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                            LinkedList* grupo = CRegular.getGroup(i);
                             if (grupo != nullptr) {
                             vector<string> members = grupo->getMembers();
-                            int TiempoEstimado = i*5;
+                            int TiempoEstimado = (i+1)*5;
 
                             string detalle = "Grupo: " + to_string(i + 1) + "\n";
                             detalle += "Tiempo estimado de espera: " + to_string(TiempoEstimado) + " minutos\n";
@@ -476,7 +479,7 @@ int main() {
     }
     
 
-    if (actual.asSeconds() > 5){
+    if (actual.asSeconds() > 15){
         ColaPorPrioridad();
         relog.restart();
     }
