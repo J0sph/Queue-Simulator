@@ -43,6 +43,7 @@ enum Estado {
     INGRESAR_NOMBRE,   // Introducir texto
     ELIMINAR_GRUPO,
     INGRESAR_GRUPO,
+    INGRESAR_PRIORIDAD,
     MOVER_GRUPO
 };
 
@@ -312,34 +313,55 @@ int main() {
                             while(stream >> nombre){
                                 names.push_back(nombre);
                             }
-                            if(tipoGrupo == "VIP"){
-                                AgregarElementoACola(true, names, 1);
-                                
+                            capturandoTexto = false;
+                            inputText = "";
+
+                            if (tipoGrupo == "VIP"){
+                            estado = INGRESAR_PRIORIDAD;
+                            capturandoTexto = true;
+                            mostrarMensajeInstruccion = true;
+                            MensajeInstruccion.setString("Ingrese la prioridad del grupo");
                             } else {
-                                AgregarElementoACola(false, names, 1);
-                            }
-                                names.clear();  
+                                AgregarElementoACola(false, names, 0);
+                                names.clear();
                                 capturandoTexto = false;
-                                inputText = "";
                                 estado = INICIAL;
                                 mostrarMensajeInstruccion = false;
                                 MensajeInstruccion.setString("");
+                            }
+                        } else if (estado == INGRESAR_PRIORIDAD) {
 
-                        } else if (estado == INGRESAR_GRUPO) {   
-                                numeroGrupo = std::stoi(inputText);    
-                    
+                            try{
+                            priority = stoi(inputText);
+
+                            if(tipoGrupo == "VIP"){
+                                AgregarElementoACola(true, names, priority  );
+                                
+                            }
+                            names.clear();
+                            capturandoTexto = false;
+                            inputText = "";
+                            estado = INICIAL;
+                            mostrarMensajeInstruccion = false;
+                            MensajeInstruccion.setString("");
+                            } catch (const std::invalid_argument& e){
+                                MensajeInstruccion.setString("Error: Ingrese un número entero");
+                                inputText = "";
+                            }
+                            
+                        } else if (estado == INGRESAR_GRUPO){
+                            numeroGrupo = std::stoi(inputText);
+
                             if (tipoGrupo == "VIP"){
-                            CVIP.deleteGroup(numeroGrupo);
+                                CVIP.deleteGroup(numeroGrupo);
                             } else {
                                 CRegular.deleteGroup(numeroGrupo);
                             }
-
                             capturandoTexto = false;
-                            inputText="";
-                            estado = INICIAL;  
+                            inputText = "";
+                            estado = INICIAL;
                             mostrarMensajeInstruccion = false;
                             MensajeInstruccion.setString("");
-
                         } else if(estado == MOVER_GRUPO) {
 
                            int numeroGrupo = std::stoi(inputText);
